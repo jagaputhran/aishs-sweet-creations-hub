@@ -25,10 +25,39 @@ const CustomOrders = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Construct WhatsApp message with order details
+    let whatsappMessage = `🍰 *Custom Order Request - Dunkin Delicacies*\n\n`;
+    whatsappMessage += `👤 *Customer Details:*\n`;
+    whatsappMessage += `Name: ${formData.name}\n`;
+    whatsappMessage += `Phone: ${formData.phone}\n`;
+    if (formData.email) whatsappMessage += `Email: ${formData.email}\n`;
+    
+    whatsappMessage += `\n🎉 *Order Details:*\n`;
+    if (formData.occasion) whatsappMessage += `Occasion: ${formData.occasion}\n`;
+    if (formData.flavor) whatsappMessage += `Flavor: ${formData.flavor}\n`;
+    if (formData.size) whatsappMessage += `Size: ${formData.size}\n`;
+    if (formData.toppings) whatsappMessage += `Toppings/Decorations: ${formData.toppings}\n`;
+    if (formData.date) whatsappMessage += `Required Date: ${formData.date}\n`;
+    if (formData.budget) whatsappMessage += `Budget: ${formData.budget}\n`;
+    
+    if (formData.message) {
+      whatsappMessage += `\n💬 *Additional Details:*\n${formData.message}\n`;
+    }
+    
+    whatsappMessage += `\nThank you! Please confirm the details and let me know the final pricing. 😊`;
+
+    // Create WhatsApp URL
+    const whatsappUrl = `https://wa.me/918015102020?text=${encodeURIComponent(whatsappMessage)}`;
+    
+    // Open WhatsApp
+    window.open(whatsappUrl, '_blank');
+    
     toast({
-      title: "Order Request Received!",
-      description: "Thank you! We'll contact you within 24 hours to discuss your custom order.",
+      title: "Redirecting to WhatsApp!",
+      description: "Your custom order details have been prepared. Complete your order on WhatsApp.",
     });
+    
     // Reset form
     setFormData({
       name: '', phone: '', email: '', occasion: '', flavor: '', size: '', 
@@ -197,11 +226,11 @@ const CustomOrders = () => {
                   type="submit" 
                   className="w-full bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
                 >
-                  Submit Custom Order Request
+                  Send Order via WhatsApp
                 </Button>
 
                 <p className="text-center text-gray-600 text-sm">
-                  * We'll contact you within 24 hours to discuss pricing and finalize details
+                  * Click to send your order details to WhatsApp for pricing and confirmation
                 </p>
               </form>
             </CardContent>
