@@ -52,10 +52,10 @@ const InstagramFeed = () => {
           </p>
           <Button 
             className="bg-gradient-to-r from-pink-400 to-purple-500 hover:from-pink-500 hover:to-purple-600 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-            onClick={() => window.open('https://instagram.com/dunkinDelicacies', '_blank')}
+            onClick={() => window.open('https://instagram.com/dunkin.delicacies', '_blank')}
           >
             <Instagram className="w-5 h-5 mr-2" />
-            Follow @dunkinDelicacies
+            Follow @dunkin.delicacies
             <ExternalLink className="w-4 h-4 ml-2" />
           </Button>
         </div>
@@ -65,7 +65,7 @@ const InstagramFeed = () => {
             <Card 
               key={post.id} 
               className="group cursor-pointer overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
-              onClick={() => window.open('https://instagram.com/dunkinDelicacies', '_blank')}
+              onClick={() => window.open('https://instagram.com/dunkin.delicacies', '_blank')}
             >
               <CardContent className="p-0 relative">
                 <div className="aspect-square overflow-hidden">

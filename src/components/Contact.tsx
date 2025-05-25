@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,12 +6,12 @@ import { Phone, Mail, MessageCircle, MapPin, Clock } from 'lucide-react';
 const Contact = () => {
   const handleWhatsAppOrder = () => {
     const message = "Hi! I'd like to place an order from Dunkin Delicacies. Could you please help me with the menu and pricing?";
-    const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/918015102020?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleCall = () => {
-    window.location.href = 'tel:+919876543210';
+    window.location.href = 'tel:+918015102020';
   };
 
   const handleEmail = () => {
@@ -43,7 +42,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h4 className="font-semibold text-gray-800">Phone</h4>
-                      <p className="text-gray-600">+91 98765 43210</p>
+                      <p className="text-gray-600">+91 80151 02020</p>
                     </div>
                   </div>
 

@@ -45,7 +45,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-center md:justify-end">
                 <Phone className="w-5 h-5 mr-2 text-pink-400" />
-                <span className="text-gray-400">+91 98765 43210</span>
+                <span className="text-gray-400">+91 80151 02020</span>
               </div>
               <div className="flex items-center justify-center md:justify-end">
                 <Mail className="w-5 h-5 mr-2 text-pink-400" />
@@ -53,7 +53,7 @@ const Footer = () => {
               </div>
               <div className="flex justify-center md:justify-end mt-4">
                 <a 
-                  href="https://instagram.com/dunkinDelicacies" 
+                  href="https://instagram.com/dunkin.delicacies" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 p-3 rounded-full transition-all duration-300 transform hover:scale-110"
