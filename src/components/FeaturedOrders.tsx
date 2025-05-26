@@ -16,6 +16,62 @@ const FeaturedOrders = () => {
           </p>
         </div>
 
+        {/* Gourmet Brownie Box Showcase */}
+        <div className="max-w-5xl mx-auto mb-16">
+          <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-0 shadow-xl overflow-hidden">
+            <CardContent className="p-8">
+              <div className="text-center space-y-6">
+                {/* Brownie Box Image */}
+                <div className="relative inline-block">
+                  <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+                    <img 
+                      src="/lovable-uploads/3cdf0e1d-f4bb-462c-806f-e0fed4349594.png" 
+                      alt="Box of 6 assorted gourmet brownies with rich toppings"
+                      className="w-full max-w-4xl h-auto object-contain"
+                    />
+                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-3">
+                      <Heart className="w-6 h-6 text-amber-600 fill-amber-600" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Caption */}
+                <div className="max-w-3xl mx-auto">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-amber-200">
+                    <h3 className="text-3xl font-bold text-gray-800 mb-4 font-serif">
+                      🍫 Assorted Gourmet Brownie Box
+                    </h3>
+                    
+                    <div className="space-y-4 text-gray-700">
+                      <p className="text-lg font-medium leading-relaxed">
+                        A handcrafted indulgence with Nutella, Dark & White Chocolate, and Biscoff.
+                      </p>
+                      
+                      <p className="text-lg font-medium leading-relaxed">
+                        Toppings include: Cashews, Almonds, Hazelnuts, Chocochips, Golden Sprinkles.
+                      </p>
+                      
+                      <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl border border-yellow-200">
+                        <p className="text-xl font-serif italic text-gray-800">
+                          💛 Each piece, a love letter from our oven.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full border border-amber-200">
+                    <span className="text-sm text-gray-600 italic font-handwritten">Crafted with passion in our home kitchen</span>
+                    <Heart className="w-4 h-4 text-amber-500" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Original Anniversary Order */}
         <div className="max-w-6xl mx-auto">
           <Card className="bg-gradient-to-br from-pink-50 to-rose-100 border-0 shadow-xl overflow-hidden">
             <CardContent className="p-0">
