@@ -2,6 +2,7 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import Menu from '../components/Menu';
+import FeaturedOrders from '../components/FeaturedOrders';
 import About from '../components/About';
 import CustomOrders from '../components/CustomOrders';
 import Testimonials from '../components/Testimonials';
@@ -14,6 +15,7 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-b from-cream to-white">
       <Hero />
       <Menu />
+      <FeaturedOrders />
       <About />
       <CustomOrders />
       <Testimonials />
