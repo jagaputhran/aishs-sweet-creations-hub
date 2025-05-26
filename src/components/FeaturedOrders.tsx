@@ -17,17 +17,18 @@ const FeaturedOrders = () => {
         </div>
 
         {/* Gourmet Brownie Box Showcase */}
-        <div className="max-w-5xl mx-auto mb-16">
+        <div className="max-w-6xl mx-auto mb-16">
           <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-0 shadow-xl overflow-hidden">
             <CardContent className="p-8">
-              <div className="text-center space-y-6">
-                {/* Brownie Box Image */}
-                <div className="relative inline-block">
-                  <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+              <div className="space-y-8">
+                {/* Brownie Box Image - Maintaining horizontal aspect ratio */}
+                <div className="relative w-full">
+                  <div className="relative overflow-hidden rounded-2xl shadow-2xl">
                     <img 
                       src="/lovable-uploads/3cdf0e1d-f4bb-462c-806f-e0fed4349594.png" 
                       alt="Box of 6 assorted gourmet brownies with rich toppings"
-                      className="w-full max-w-4xl h-auto object-contain"
+                      className="w-full h-auto object-contain"
+                      style={{ aspectRatio: 'auto' }}
                     />
                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-3">
                       <Heart className="w-6 h-6 text-amber-600 fill-amber-600" />
@@ -35,35 +36,48 @@ const FeaturedOrders = () => {
                   </div>
                 </div>
 
-                {/* Caption */}
-                <div className="max-w-3xl mx-auto">
+                {/* Order Details */}
+                <div className="max-w-4xl mx-auto">
                   <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-amber-200">
-                    <h3 className="text-3xl font-bold text-gray-800 mb-4 font-serif">
-                      🍫 Assorted Gourmet Brownie Box
+                    <h3 className="text-3xl font-bold text-gray-800 mb-6 font-serif text-center">
+                      🧁 Order Details
                     </h3>
                     
                     <div className="space-y-4 text-gray-700">
-                      <p className="text-lg font-medium leading-relaxed">
-                        A handcrafted indulgence with Nutella, Dark & White Chocolate, and Biscoff.
-                      </p>
+                      <div className="flex items-start gap-3">
+                        <span className="text-pink-500 text-xl">💝</span>
+                        <span className="font-medium text-lg">Whole Wheat Heart-Shaped Eggless Brownie</span>
+                      </div>
                       
-                      <p className="text-lg font-medium leading-relaxed">
-                        Toppings include: Cashews, Almonds, Hazelnuts, Chocochips, Golden Sprinkles.
-                      </p>
+                      <div className="flex items-start gap-3">
+                        <span className="text-orange-500 text-xl">🍪</span>
+                        <span className="font-medium text-lg">5 Tins of Cookies + 2 Assorted Brownie Boxes</span>
+                      </div>
                       
                       <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl border border-yellow-200">
+                        <p className="font-semibold text-gray-800 mb-2">
+                          ✨ Price inclusive of toppings:
+                        </p>
+                        <p className="text-gray-700">
+                          Cashews, Almonds, Hazelnuts, Chocochips, Golden Sprinkles
+                        </p>
+                      </div>
+                      
+                      <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+                        <p className="font-semibold text-gray-800 mb-2">
+                          🍫 Flavours used:
+                        </p>
+                        <p className="text-gray-700">
+                          Nutella, Dark & White Chocolate, Biscoff
+                        </p>
+                      </div>
+                      
+                      <div className="mt-6 p-4 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl border border-yellow-200 text-center">
                         <p className="text-xl font-serif italic text-gray-800">
-                          💛 Each piece, a love letter from our oven.
+                          💛 Crafted with love at Dunkin Delicacies – By AISH
                         </p>
                       </div>
                     </div>
-                  </div>
-                </div>
-
-                <div className="text-center">
-                  <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full border border-amber-200">
-                    <span className="text-sm text-gray-600 italic font-handwritten">Crafted with passion in our home kitchen</span>
-                    <Heart className="w-4 h-4 text-amber-500" />
                   </div>
                 </div>
               </div>
