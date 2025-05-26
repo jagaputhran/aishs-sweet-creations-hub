@@ -22,22 +22,22 @@ const FeaturedOrders = () => {
               <div className="grid lg:grid-cols-2 gap-0">
                 {/* Images Section */}
                 <div className="p-8 space-y-6">
-                  <div className="relative">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg">
                     <img 
                       src="/lovable-uploads/50c65959-72a2-4c1a-9d8f-959c48af0709.png" 
                       alt="Heart-shaped anniversary brownie cake with decorative toppings"
-                      className="w-full h-80 object-cover rounded-2xl shadow-lg"
+                      className="w-full h-full object-cover object-center"
                     />
                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2">
                       <Heart className="w-6 h-6 text-red-500 fill-red-500" />
                     </div>
                   </div>
                   
-                  <div className="relative">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lg">
                     <img 
                       src="/lovable-uploads/db3bbadf-488d-4dee-bd9b-2d7260fa935d.png" 
                       alt="Collection of cookie tins and brownie boxes with Dunkin Delicacies branding"
-                      className="w-full h-80 object-cover rounded-2xl shadow-lg"
+                      className="w-full h-full object-cover object-center"
                     />
                     <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1">
                       <div className="flex items-center gap-1">
