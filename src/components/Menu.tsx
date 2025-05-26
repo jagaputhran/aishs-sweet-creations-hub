@@ -43,6 +43,18 @@ const Menu = () => {
         { name: "Custom Theme Cake", weight: "2kg", price: "₹1500" }
       ],
       bgColor: "bg-gradient-to-br from-purple-100 to-pink-100"
+    },
+    {
+      name: "Healthy & Special Dietary Options",
+      description: "Delicious treats for everyone - eggless, sugar-free & diabetic-friendly",
+      items: [
+        { name: "Eggless Wheat Brownies", weight: "4 pieces", price: "₹220" },
+        { name: "Sugar-Free Chocolate Cookies", weight: "100g (6 pieces)", price: "₹180" },
+        { name: "Diabetic-Friendly Vanilla Cake", weight: "500g", price: "₹450" },
+        { name: "Vegan Oat Cookies", weight: "100g (6 pieces)", price: "₹170" },
+        { name: "Gluten-Free Almond Brownies", weight: "4 pieces", price: "₹280" }
+      ],
+      bgColor: "bg-gradient-to-br from-green-100 to-emerald-100"
     }
   ];
 
@@ -58,12 +70,12 @@ const Menu = () => {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {categories.map((category, index) => (
-            <Card key={category.name} className={`${category.bgColor} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}>
+            <Card key={category.name} className={`${category.bgColor} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 ${category.name === "Healthy & Special Dietary Options" ? "md:col-span-2" : ""}`}>
               <CardContent className="p-8">
                 <h3 className="text-3xl font-bold text-gray-800 mb-3">{category.name}</h3>
                 <p className="text-gray-600 mb-6 text-lg italic">{category.description}</p>
                 
-                <div className="space-y-4">
+                <div className={`space-y-4 ${category.name === "Healthy & Special Dietary Options" ? "grid md:grid-cols-2 md:gap-4 md:space-y-0" : ""}`}>
                   {category.items.map((item, itemIndex) => (
                     <div key={itemIndex} className="flex justify-between items-center bg-white/70 rounded-lg p-4 backdrop-blur-sm">
                       <div>
@@ -82,6 +94,9 @@ const Menu = () => {
         <div className="text-center mt-12">
           <p className="text-gray-600 text-lg">
             All prices are indicative. Custom orders and bulk discounts available!
+          </p>
+          <p className="text-gray-600 text-sm mt-2">
+            🌱 Vegetarian • 🍃 Eggless • 🍯 Sugar-Free Options Available
           </p>
         </div>
       </div>
