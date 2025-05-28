@@ -17,6 +17,10 @@ import SpecialAnniversaryOrders from '../components/SpecialAnniversaryOrders';
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
 
+  const handleSweetTreatsClick = () => {
+    setActiveTab("menu");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-cream to-white">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -45,7 +49,7 @@ const Index = () => {
                 className="flex items-center gap-2 px-2 md:px-4 py-3 text-xs md:text-base font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent data-[state=active]:text-pink-600 hover:text-pink-500 transition-all duration-200"
               >
                 <Cake className="w-4 h-4" />
-                <span className="hidden sm:inline">Recent Creations</span>
+                <span className="hidden sm:inline">Recent Sweet Creations</span>
                 <span className="sm:hidden">Recent</span>
               </TabsTrigger>
               
@@ -54,7 +58,7 @@ const Index = () => {
                 className="flex items-center gap-2 px-2 md:px-4 py-3 text-xs md:text-base font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent data-[state=active]:text-pink-600 hover:text-pink-500 transition-all duration-200"
               >
                 <Star className="w-4 h-4" />
-                <span className="hidden sm:inline">Anniversary Orders</span>
+                <span className="hidden sm:inline">Special Anniversary Orders</span>
                 <span className="sm:hidden">Anniversary</span>
               </TabsTrigger>
               
@@ -89,7 +93,7 @@ const Index = () => {
         {/* Tab Content Sections */}
         <TabsContent value="home" className="mt-0 focus-visible:outline-none">
           <div className="animate-fade-in">
-            <Hero />
+            <Hero onSweetTreatsClick={handleSweetTreatsClick} />
             <FeaturedOrders />
             <Testimonials />
             <InstagramFeed />
