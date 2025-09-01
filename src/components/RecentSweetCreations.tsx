@@ -60,30 +60,6 @@ const RecentSweetCreations = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {recentCreations.map((creation) => (
-            <Card key={creation.id} className="bg-white/90 backdrop-blur-sm shadow-xl border border-pink-200 overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="relative">
-                <img 
-                  src={creation.image} 
-                  alt={creation.item}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute top-4 left-4 bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                  New
-                </div>
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{creation.item}</h3>
-                <p className="text-gray-600 mb-3">{creation.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-pink-600 font-semibold">For {creation.customer}</span>
-                  <span className="text-rose-600 font-bold">✨ Delivered</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
         
         <div className="text-center mt-12">
           <p className="text-gray-600 italic text-lg">

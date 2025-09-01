@@ -12,7 +12,7 @@ import InstagramFeed from '../components/InstagramFeed';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import RecentSweetCreations from '../components/RecentSweetCreations';
-import SpecialAnniversaryOrders from '../components/SpecialAnniversaryOrders';
+
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -82,7 +82,6 @@ const Index = () => {
             <Hero onSweetTreatsClick={handleSweetTreatsClick} />
             <div id="menu-section">
               <RecentSweetCreations />
-              <SpecialAnniversaryOrders />
             </div>
             <FeaturedOrders />
             <Testimonials />
