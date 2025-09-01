@@ -3,11 +3,11 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 
-interface HeroProps {
-  onSweetTreatsClick: () => void;
-}
+const Hero = () => {
+  const scrollToMenu = () => {
+    document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-const Hero: React.FC<HeroProps> = ({ onSweetTreatsClick }) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-cream to-pink-100 overflow-hidden">
       {/* Decorative background elements */}
@@ -41,7 +41,7 @@ const Hero: React.FC<HeroProps> = ({ onSweetTreatsClick }) => {
           
           {/* CTA Button */}
           <Button 
-            onClick={onSweetTreatsClick}
+            onClick={scrollToMenu}
             size="lg" 
             className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in"
             style={{ animationDelay: '0.6s' }}
