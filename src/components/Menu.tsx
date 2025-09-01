@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { motion } from 'framer-motion';
 
 const Menu = () => {
   const categories = [
@@ -61,33 +62,119 @@ const Menu = () => {
   return (
     <section id="menu" className="py-20 bg-gradient-to-b from-white to-pink-50">
       <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl font-bold text-gray-800 mb-4">Our Sweet Menu</h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <motion.h2 
+            className="text-5xl font-bold text-gray-800 mb-4"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            Our Sweet Menu
+          </motion.h2>
+          <motion.div
+            className="w-24 h-1 bg-gradient-to-r from-pink-400 to-rose-500 mx-auto mb-4 rounded-full"
+            initial={{ width: 0 }}
+            whileInView={{ width: 96 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true }}
+          />
+          <motion.p 
+            className="text-xl text-gray-600 max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            viewport={{ once: true }}
+          >
             Every bite tells a story of passion, quality, and the joy of homemade goodness
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {categories.map((category, index) => (
-            <Card key={category.name} className={`${category.bgColor} border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 ${category.name === "Healthy & Special Dietary Options" ? "md:col-span-2" : ""}`}>
-              <CardContent className="p-8">
-                <h3 className="text-3xl font-bold text-gray-800 mb-3">{category.name}</h3>
-                <p className="text-gray-600 mb-6 text-lg italic">{category.description}</p>
+            <motion.div
+              key={category.name}
+              initial={{ opacity: 0, y: 50, rotateX: -15 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{ 
+                duration: 0.6, 
+                delay: index * 0.1,
+                ease: "easeOut"
+              }}
+              viewport={{ once: true, margin: "-50px" }}
+              className={category.name === "Healthy & Special Dietary Options" ? "md:col-span-2" : ""}
+            >
+              <Card className={`${category.bgColor} border-0 shadow-lg transition-all duration-300 group overflow-hidden`}>
+                <motion.div
+                  whileHover={{ 
+                    y: -8,
+                    rotateY: 5,
+                    boxShadow: "0 25px 50px rgba(0,0,0,0.15)"
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <CardContent className="p-8">
+                    <motion.h3 
+                      className="text-3xl font-bold text-gray-800 mb-3"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
+                      viewport={{ once: true }}
+                    >
+                      {category.name}
+                    </motion.h3>
+                    <motion.p 
+                      className="text-gray-600 mb-6 text-lg italic"
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
+                      viewport={{ once: true }}
+                    >
+                      {category.description}
+                    </motion.p>
                 
-                <div className={`space-y-4 ${category.name === "Healthy & Special Dietary Options" ? "grid md:grid-cols-2 md:gap-4 md:space-y-0" : ""}`}>
-                  {category.items.map((item, itemIndex) => (
-                    <div key={itemIndex} className="flex justify-between items-center bg-white/70 rounded-lg p-4 backdrop-blur-sm">
-                      <div>
-                        <h4 className="font-semibold text-gray-800 text-lg">{item.name}</h4>
-                        <p className="text-gray-600">{item.weight}</p>
-                      </div>
-                      <div className="text-2xl font-bold text-rose-600">{item.price}</div>
+                    <div className={`space-y-4 ${category.name === "Healthy & Special Dietary Options" ? "grid md:grid-cols-2 md:gap-4 md:space-y-0" : ""}`}>
+                      {category.items.map((item, itemIndex) => (
+                        <motion.div 
+                          key={itemIndex} 
+                          className="flex justify-between items-center bg-white/70 rounded-lg p-4 backdrop-blur-sm group-hover:bg-white/90 transition-all duration-300"
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          transition={{ 
+                            duration: 0.3, 
+                            delay: index * 0.1 + itemIndex * 0.05 + 0.4 
+                          }}
+                          whileHover={{ 
+                            scale: 1.02,
+                            backgroundColor: "rgba(255, 255, 255, 0.95)"
+                          }}
+                          viewport={{ once: true }}
+                        >
+                          <div>
+                            <h4 className="font-semibold text-gray-800 text-lg">{item.name}</h4>
+                            <p className="text-gray-600">{item.weight}</p>
+                          </div>
+                          <motion.div 
+                            className="text-2xl font-bold text-rose-600"
+                            whileHover={{ scale: 1.1 }}
+                            transition={{ type: "spring", stiffness: 400 }}
+                          >
+                            {item.price}
+                          </motion.div>
+                        </motion.div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </motion.div>
+              </Card>
+            </motion.div>
           ))}
         </div>
 
