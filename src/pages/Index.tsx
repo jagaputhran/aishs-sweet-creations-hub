@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Home, MenuIcon, Heart, User, Phone } from 'lucide-react';
+import { Home, MenuIcon, Heart, User, Phone, Cake, Star } from 'lucide-react';
 import Hero from '../components/Hero';
 import Menu from '../components/Menu';
 import FeaturedOrders from '../components/FeaturedOrders';
@@ -18,11 +18,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
 
   const handleSweetTreatsClick = () => {
-    // Scroll to the menu section below
-    const menuSection = document.getElementById('menu-section');
-    if (menuSection) {
-      menuSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    setActiveTab("menu");
   };
 
   return (
@@ -46,6 +42,24 @@ const Index = () => {
               >
                 <MenuIcon className="w-4 h-4" />
                 <span className="hidden sm:inline">Menu</span>
+              </TabsTrigger>
+              
+              <TabsTrigger 
+                value="recent-creations" 
+                className="flex items-center gap-2 px-2 md:px-4 py-3 text-xs md:text-base font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent data-[state=active]:text-pink-600 hover:text-pink-500 transition-all duration-200"
+              >
+                <Cake className="w-4 h-4" />
+                <span className="hidden sm:inline">Recent Sweet Creations</span>
+                <span className="sm:hidden">Recent</span>
+              </TabsTrigger>
+              
+              <TabsTrigger 
+                value="anniversary-orders" 
+                className="flex items-center gap-2 px-2 md:px-4 py-3 text-xs md:text-base font-medium rounded-none border-b-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-transparent data-[state=active]:text-pink-600 hover:text-pink-500 transition-all duration-200"
+              >
+                <Star className="w-4 h-4" />
+                <span className="hidden sm:inline">Special Anniversary Orders</span>
+                <span className="sm:hidden">Anniversary</span>
               </TabsTrigger>
               
               <TabsTrigger 
@@ -80,10 +94,6 @@ const Index = () => {
         <TabsContent value="home" className="mt-0 focus-visible:outline-none">
           <div className="animate-fade-in">
             <Hero onSweetTreatsClick={handleSweetTreatsClick} />
-            <div id="menu-section">
-              <RecentSweetCreations />
-              <SpecialAnniversaryOrders />
-            </div>
             <FeaturedOrders />
             <Testimonials />
             <InstagramFeed />
@@ -93,6 +103,18 @@ const Index = () => {
         <TabsContent value="menu" className="mt-0 focus-visible:outline-none">
           <div className="animate-fade-in">
             <Menu />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="recent-creations" className="mt-0 focus-visible:outline-none">
+          <div className="animate-fade-in">
+            <RecentSweetCreations />
+          </div>
+        </TabsContent>
+
+        <TabsContent value="anniversary-orders" className="mt-0 focus-visible:outline-none">
+          <div className="animate-fade-in">
+            <SpecialAnniversaryOrders />
           </div>
         </TabsContent>
 
