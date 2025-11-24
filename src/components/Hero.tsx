@@ -1,16 +1,72 @@
-
-import React from 'react';
+import React, { useEffect, useRef, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Lazy load 3D component for better performance
+const BakeryScene3D = React.lazy(() => import('./BakeryScene3D'));
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Hero = () => {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
   const scrollToMenu = () => {
     document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  useEffect(() => {
+    // GSAP entrance animations
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline();
+      
+      tl.from(titleRef.current, {
+        opacity: 0,
+        y: 50,
+        scale: 0.9,
+        duration: 1,
+        ease: 'power3.out'
+      })
+      .from(subtitleRef.current, {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        ease: 'power2.out'
+      }, '-=0.5')
+      .from(ctaRef.current, {
+        opacity: 0,
+        scale: 0.8,
+        duration: 0.6,
+        ease: 'back.out(1.7)'
+      }, '-=0.4');
+
+      // Scroll-triggered animations
+      gsap.to(heroRef.current, {
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1,
+        },
+        opacity: 0.8,
+        y: -100,
+        scale: 0.95,
+      });
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-cream to-pink-100 overflow-hidden">
+    <section 
+      ref={heroRef}
+      className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 via-cream to-pink-100 overflow-hidden"
+    >
       {/* Floating sparkles background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
@@ -77,36 +133,38 @@ const Hero = () => {
         />
       </div>
 
+      {/* 3D Bakery Scene */}
+      <div className="absolute inset-0 z-0 opacity-60">
+        <Suspense fallback={
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="animate-pulse text-pink-300">Loading 3D Scene...</div>
+          </div>
+        }>
+          <BakeryScene3D />
+        </Suspense>
+      </div>
+
       <motion.div 
         className="container mx-auto px-6 text-center relative z-10"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto backdrop-blur-sm bg-white/30 rounded-3xl p-8 shadow-2xl">
           {/* Brand name with playful entrance */}
-          <motion.h1 
-            className="text-6xl md:text-8xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-500 to-orange-400"
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            whileHover={{ 
-              scale: 1.05,
-              rotate: [-1, 1, -1, 0],
-              transition: { duration: 0.5 }
-            }}
+          <h1 
+            ref={titleRef}
+            className="text-6xl md:text-8xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-rose-500 to-orange-400 drop-shadow-lg"
           >
             Dunkin Delicacies
-          </motion.h1>
+          </h1>
           
           {/* Subtitle with sparkle effect */}
-          <motion.div
+          <div
+            ref={subtitleRef}
             className="relative inline-block"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <p className="text-2xl md:text-3xl text-gray-700 mb-4 font-light italic">
+            <p className="text-2xl md:text-3xl text-gray-800 mb-4 font-light italic drop-shadow">
               By AISH
             </p>
             <motion.div
@@ -114,36 +172,22 @@ const Hero = () => {
               animate={{ rotate: [0, 360] }}
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
             >
-              <Sparkles className="w-6 h-6 text-yellow-400" />
+              <Sparkles className="w-6 h-6 text-yellow-400 drop-shadow-lg" />
             </motion.div>
-          </motion.div>
+          </div>
           
-          {/* Slogan with slide-in effect */}
-          <motion.h2 
-            className="text-2xl md:text-4xl font-semibold mb-8 text-gray-800"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.4 }}
-          >
+          {/* Slogan */}
+          <h2 className="text-2xl md:text-4xl font-semibold mb-8 text-gray-900 drop-shadow">
             Crafted with Love, Baked to Delight
-          </motion.h2>
+          </h2>
           
-          {/* Description with fade-in */}
-          <motion.p 
-            className="text-lg md:text-xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
+          {/* Description */}
+          <p className="text-lg md:text-xl text-gray-700 mb-12 max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
             Indulge in artisan cookies, heavenly brownies, delicate cupcakes, and custom celebration cakes made with the finest ingredients and boundless passion.
-          </motion.p>
+          </p>
           
-          {/* CTA Button with pulse and enhanced hover */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-          >
+          {/* CTA Buttons */}
+          <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <motion.div
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -151,22 +195,31 @@ const Hero = () => {
               <Button 
                 onClick={scrollToMenu}
                 size="lg" 
-                className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg transition-all duration-300"
-                asChild
+                className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-2xl hover:shadow-pink-300/50 transition-all duration-300"
               >
-                <motion.button
-                  whileHover={{ 
-                    scale: 1.1,
-                    boxShadow: "0 20px 40px rgba(236, 72, 153, 0.3)"
-                  }}
+                <motion.span
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
-                  Explore Sweet Treats
-                </motion.button>
+                  Explore Recipes
+                </motion.span>
               </Button>
             </motion.div>
-          </motion.div>
+            
+            <Button 
+              onClick={() => document.getElementById('orders')?.scrollIntoView({ behavior: 'smooth' })}
+              size="lg" 
+              variant="outline"
+              className="border-2 border-pink-400 text-pink-600 hover:bg-pink-50 px-8 py-4 text-lg font-semibold rounded-full shadow-lg backdrop-blur-sm bg-white/50 transition-all duration-300"
+            >
+              <motion.span
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Start Baking
+              </motion.span>
+            </Button>
+          </div>
         </div>
       </motion.div>
       
