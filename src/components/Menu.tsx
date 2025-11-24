@@ -39,9 +39,9 @@ const Menu = () => {
       name: "Artisan Cakes",
       description: "Custom creations for your special moments",
       items: [
-        { name: "Birthday Celebration Cake", weight: "1kg", price: "₹800" },
-        { name: "Anniversary Special Cake", weight: "1.5kg", price: "₹1200" },
-        { name: "Custom Theme Cake", weight: "2kg", price: "₹1500" }
+        { name: "Birthday Celebration Cake", weight: "1kg", price: "₹1000" },
+        { name: "Anniversary Special Cake", weight: "1.5kg", price: "₹1500" },
+        { name: "Custom Theme Cake", weight: "2kg", price: "₹1850" }
       ],
       bgColor: "bg-gradient-to-br from-purple-100 to-pink-100"
     },
