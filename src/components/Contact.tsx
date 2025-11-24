@@ -15,7 +15,7 @@ const Contact = () => {
   };
 
   const handleEmail = () => {
-    window.location.href = 'mailto:orders@dunkinDelicacies.com';
+    window.location.href = 'mailto:ashwarya99a@gmail.com';
   };
 
   return (
