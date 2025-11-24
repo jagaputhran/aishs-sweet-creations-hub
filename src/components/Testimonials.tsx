@@ -9,31 +9,31 @@ const Testimonials = () => {
 
   const testimonials = [
     {
-      name: "Priya Sharma",
+      name: "Sathiya S",
       rating: 5,
       text: "Aishwarya made the most beautiful birthday cake for my daughter! Not only did it look amazing, but it tasted absolutely divine. The attention to detail was incredible, and everyone at the party couldn't stop talking about how delicious it was.",
       occasion: "Birthday Cake"
     },
     {
-      name: "Rajesh Kumar",
+      name: "Vignesh",
       rating: 5,
       text: "I ordered brownies for our office party and they were a huge hit! Rich, fudgy, and perfectly sweet. The entire batch was finished within minutes. Definitely ordering again for our next event.",
       occasion: "Office Party"
     },
     {
-      name: "Sneha Patel",
+      name: "Rubashree",
       rating: 5,
       text: "The cupcakes for our anniversary were absolutely perfect! Beautiful presentation and the flavors were out of this world. Aishwarya truly understands how to make special moments even more memorable with her amazing baking skills.",
       occasion: "Anniversary Cupcakes"
     },
     {
-      name: "Amit Gupta",
+      name: "Mithran",
       rating: 5,
       text: "Best cookies I've ever had! Ordered them for my family gathering and everyone loved them. The texture was perfect - crispy on the outside, chewy on the inside. Will definitely be a regular customer!",
       occasion: "Family Gathering"
     },
     {
-      name: "Kavya Reddy",
+      name: "Aravindh",
       rating: 5,
       text: "Aishwarya created a custom wedding cake that exceeded all our expectations! It was not only stunning to look at but tasted incredible. Our guests are still talking about it months later. Thank you for making our special day even more magical!",
       occasion: "Wedding Cake"
