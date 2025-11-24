@@ -133,8 +133,8 @@ const Hero = () => {
         />
       </div>
 
-      {/* 3D Bakery Scene */}
-      <div className="absolute inset-0 z-0 opacity-60">
+      {/* 3D Bakery Scene - More Visible */}
+      <div className="absolute inset-0 z-0 opacity-90">
         <Suspense fallback={
           <div className="w-full h-full flex items-center justify-center">
             <div className="animate-pulse text-pink-300">Loading 3D Scene...</div>
