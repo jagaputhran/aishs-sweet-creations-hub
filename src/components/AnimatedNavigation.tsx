@@ -109,7 +109,7 @@ const AnimatedNavigation = () => {
             {/* Contact Info */}
             <div className="hidden lg:flex items-center space-x-4">
               <motion.a
-                href="tel:+1234567890"
+                href="tel:+918015102020"
                 className="flex items-center space-x-2 text-gray-600 hover:text-pink-600 transition-colors"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -189,7 +189,7 @@ const AnimatedNavigation = () => {
                     >
                       <div className="flex space-x-4">
                         <motion.a
-                          href="tel:+1234567890"
+                          href="tel:+918015102020"
                           className="flex items-center space-x-2 text-gray-600 hover:text-pink-600 transition-colors"
                           whileTap={{ scale: 0.95 }}
                         >
@@ -197,7 +197,7 @@ const AnimatedNavigation = () => {
                           <span className="text-sm">Call</span>
                         </motion.a>
                         <motion.a
-                          href="mailto:contact@dunkinDelicacies.com"
+                          href="mailto:ashwarya99a@gmail.com"
                           className="flex items-center space-x-2 text-gray-600 hover:text-pink-600 transition-colors"
                           whileTap={{ scale: 0.95 }}
                         >
@@ -205,7 +205,9 @@ const AnimatedNavigation = () => {
                           <span className="text-sm">Email</span>
                         </motion.a>
                         <motion.a
-                          href="https://instagram.com"
+                          href="https://instagram.com/dunkin.delicacies"
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="flex items-center space-x-2 text-gray-600 hover:text-pink-600 transition-colors"
                           whileTap={{ scale: 0.95 }}
                         >
