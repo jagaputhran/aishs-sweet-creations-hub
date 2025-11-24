@@ -9,9 +9,9 @@ const Menu = () => {
       name: "Cookies",
       description: "Crispy, chewy, and irresistibly delicious",
       items: [
-        { name: "Chocolate Chip Cookies", weight: "100g (6 pieces)", price: "₹150" },
-        { name: "Oatmeal Raisin Cookies", weight: "100g (6 pieces)", price: "₹160" },
-        { name: "Double Chocolate Cookies", weight: "100g (5 pieces)", price: "₹180" }
+        { name: "Chocolate Chip Cookies", weight: "100g (10 pieces)", price: "₹400" },
+        { name: "Oatmeal Raisin Cookies", weight: "100g (10 pieces)", price: "₹400" },
+        { name: "Double Chocolate Cookies", weight: "100g (5 pieces)", price: "₹250" }
       ],
       bgColor: "bg-gradient-to-br from-orange-100 to-yellow-100"
     },
@@ -19,9 +19,9 @@ const Menu = () => {
       name: "Brownies",
       description: "Rich, fudgy, and decadently chocolatey",
       items: [
-        { name: "Classic Fudge Brownies", weight: "4 pieces", price: "₹200" },
-        { name: "Walnut Brownies", weight: "4 pieces", price: "₹250" },
-        { name: "Salted Caramel Brownies", weight: "4 pieces", price: "₹280" }
+        { name: "Classic Fudge Brownies", weight: "4 pieces", price: "₹320" },
+        { name: "Walnut Brownies", weight: "4 pieces", price: "₹350" },
+        { name: "Salted Caramel Brownies", weight: "6 pieces", price: "₹900" }
       ],
       bgColor: "bg-gradient-to-br from-amber-100 to-orange-100"
     },
@@ -31,7 +31,7 @@ const Menu = () => {
       items: [
         { name: "Vanilla Bean Cupcakes", weight: "6 pieces", price: "₹300" },
         { name: "Red Velvet Cupcakes", weight: "6 pieces", price: "₹350" },
-        { name: "Lemon Blueberry Cupcakes", weight: "6 pieces", price: "₹320" }
+        { name: "Lemon Blueberry Cupcakes", weight: "6 pieces", price: "₹450" }
       ],
       bgColor: "bg-gradient-to-br from-pink-100 to-rose-100"
     },
@@ -40,8 +40,8 @@ const Menu = () => {
       description: "Custom creations for your special moments",
       items: [
         { name: "Birthday Celebration Cake", weight: "1kg", price: "₹1000" },
-        { name: "Anniversary Special Cake", weight: "1.5kg", price: "₹1500" },
-        { name: "Custom Theme Cake", weight: "2kg", price: "₹1850" }
+        { name: "Anniversary Special Cake", weight: "850gm", price: "₹1300" },
+        { name: "Custom Theme Cake", weight: "1kg", price: "₹1200" }
       ],
       bgColor: "bg-gradient-to-br from-purple-100 to-pink-100"
     },
@@ -49,11 +49,11 @@ const Menu = () => {
       name: "Healthy & Special Dietary Options",
       description: "Delicious treats for everyone - eggless, sugar-free & diabetic-friendly",
       items: [
-        { name: "Eggless Wheat Brownies", weight: "4 pieces", price: "₹220" },
-        { name: "Sugar-Free Chocolate Cookies", weight: "100g (6 pieces)", price: "₹180" },
-        { name: "Diabetic-Friendly Vanilla Cake", weight: "500g", price: "₹450" },
-        { name: "Vegan Oat Cookies", weight: "100g (6 pieces)", price: "₹170" },
-        { name: "Gluten-Free Almond Brownies", weight: "4 pieces", price: "₹280" }
+        { name: "Assorted Whole Wheat Brownie Box", quantity: "600g - 6 pcs", price: "₹900" },
+        { name: "Classic Butter Cookies Whole Wheat", quantity: "200g - 12 pcs", price: "300" },
+        { name: "Whole Wheat Oats & Nuts", quantity: "400g - 10 pcs", price: "₹800" },
+        { name: "Classic Choco chunk cookies", quantity: "340g - 5 pcs", price: "₹300" },
+        { name: "Whole Wheat Choco Chunk Cookies", quantity: "520g - 10 pcs", price: "₹800" }
       ],
       bgColor: "bg-gradient-to-br from-green-100 to-emerald-100"
     }
