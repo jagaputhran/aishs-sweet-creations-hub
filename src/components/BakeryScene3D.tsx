@@ -1,8 +1,9 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 import { useMotionValue, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 // Cupcake 3D Model Component
 const Cupcake = ({ position, scale = 1 }: { position: [number, number, number], scale?: number }) => {
@@ -103,8 +104,22 @@ const Cupcake = ({ position, scale = 1 }: { position: [number, number, number], 
   );
 };
 
-// Cake 3D Model Component
-const Cake = ({ position, scale = 1 }: { position: [number, number, number], scale?: number }) => {
+// Cake 3D Model Component with Customization
+const Cake = ({ 
+  position, 
+  scale = 1,
+  bottomColor = "#F4A460",
+  middleColor = "#FFE4E1",
+  topColor = "#FFB6C1",
+  berryColor = "#FF1493"
+}: { 
+  position: [number, number, number], 
+  scale?: number,
+  bottomColor?: string,
+  middleColor?: string,
+  topColor?: string,
+  berryColor?: string
+}) => {
   const meshRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
@@ -141,10 +156,10 @@ const Cake = ({ position, scale = 1 }: { position: [number, number, number], sca
       <mesh position={[0, 0, 0]} castShadow>
         <cylinderGeometry args={[1, 1, 0.4, 32]} />
         <meshStandardMaterial 
-          color="#F4A460"
+          color={bottomColor}
           roughness={0.3}
           metalness={0.2}
-          emissive="#D2691E"
+          emissive={bottomColor}
           emissiveIntensity={hovered ? 0.3 : 0.1}
         />
       </mesh>
@@ -153,10 +168,10 @@ const Cake = ({ position, scale = 1 }: { position: [number, number, number], sca
       <mesh position={[0, 0.5, 0]} castShadow>
         <cylinderGeometry args={[0.8, 0.8, 0.4, 32]} />
         <meshStandardMaterial 
-          color="#FFE4E1"
+          color={middleColor}
           roughness={0.2}
           metalness={0.3}
-          emissive="#FFB6C1"
+          emissive={middleColor}
           emissiveIntensity={hovered ? 0.3 : 0.1}
         />
       </mesh>
@@ -165,10 +180,10 @@ const Cake = ({ position, scale = 1 }: { position: [number, number, number], sca
       <mesh position={[0, 1, 0]} castShadow>
         <cylinderGeometry args={[0.6, 0.6, 0.4, 32]} />
         <meshStandardMaterial 
-          color="#FFB6C1"
+          color={topColor}
           roughness={0.2}
           metalness={0.3}
-          emissive="#FF69B4"
+          emissive={topColor}
           emissiveIntensity={hovered ? 0.4 : 0.1}
         />
       </mesh>
@@ -186,10 +201,10 @@ const Cake = ({ position, scale = 1 }: { position: [number, number, number], sca
         >
           <sphereGeometry args={[0.08, 16, 16]} />
           <meshStandardMaterial 
-            color="#FF1493"
+            color={berryColor}
             metalness={0.7}
             roughness={0.1}
-            emissive="#FF69B4"
+            emissive={berryColor}
             emissiveIntensity={0.5}
           />
         </mesh>
@@ -251,8 +266,237 @@ const RollingPin = ({ position }: { position: [number, number, number] }) => {
   );
 };
 
+// Donut Component
+const Donut = ({ position, scale = 1 }: { position: [number, number, number], scale?: number }) => {
+  const meshRef = useRef<THREE.Group>(null);
+  const [hovered, setHovered] = useState(false);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.01;
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2) * 0.05;
+    }
+  });
+
+  return (
+    <group 
+      ref={meshRef} 
+      position={position}
+      scale={hovered ? scale * 1.15 : scale}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
+      {/* Donut base */}
+      <mesh castShadow>
+        <torusGeometry args={[0.4, 0.2, 16, 32]} />
+        <meshStandardMaterial 
+          color="#F5DEB3"
+          roughness={0.4}
+          metalness={0.1}
+        />
+      </mesh>
+      {/* Icing */}
+      <mesh position={[0, 0.1, 0]} castShadow>
+        <torusGeometry args={[0.4, 0.15, 16, 32, Math.PI]} />
+        <meshStandardMaterial 
+          color={hovered ? "#FF69B4" : "#FFB6C1"}
+          roughness={0.1}
+          metalness={0.4}
+          emissive="#FF69B4"
+          emissiveIntensity={hovered ? 0.3 : 0.1}
+        />
+      </mesh>
+      {/* Sprinkles */}
+      {[...Array(12)].map((_, i) => (
+        <mesh 
+          key={i}
+          position={[
+            Math.cos((i * Math.PI * 2) / 12) * 0.4,
+            0.15,
+            Math.sin((i * Math.PI * 2) / 12) * 0.4
+          ]}
+          rotation={[Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI]}
+        >
+          <cylinderGeometry args={[0.01, 0.01, 0.08, 8]} />
+          <meshStandardMaterial 
+            color={['#FF6B9D', '#FFD93D', '#6BCB77', '#4D96FF'][Math.floor(Math.random() * 4)]}
+            metalness={0.8}
+            roughness={0.2}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
+// Cookie Component
+const Cookie = ({ position, scale = 1 }: { position: [number, number, number], scale?: number }) => {
+  const meshRef = useRef<THREE.Group>(null);
+  const [hovered, setHovered] = useState(false);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += hovered ? 0.02 : 0.005;
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 1.5) * 0.03;
+    }
+  });
+
+  return (
+    <group 
+      ref={meshRef} 
+      position={position}
+      scale={hovered ? scale * 1.1 : scale}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+    >
+      {/* Cookie base */}
+      <mesh castShadow>
+        <cylinderGeometry args={[0.3, 0.3, 0.1, 32]} />
+        <meshStandardMaterial 
+          color="#D2691E"
+          roughness={0.7}
+          metalness={0.1}
+        />
+      </mesh>
+      {/* Chocolate chips */}
+      {[...Array(8)].map((_, i) => (
+        <mesh 
+          key={i}
+          position={[
+            Math.cos((i * Math.PI * 2) / 8) * 0.15,
+            0.06,
+            Math.sin((i * Math.PI * 2) / 8) * 0.15
+          ]}
+          castShadow
+        >
+          <sphereGeometry args={[0.03, 8, 8]} />
+          <meshStandardMaterial 
+            color="#3E2723"
+            roughness={0.3}
+            metalness={0.2}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+};
+
+// Whisk Component
+const Whisk = ({ position }: { position: [number, number, number] }) => {
+  const meshRef = useRef<THREE.Group>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.015;
+      meshRef.current.rotation.z = Math.sin(state.clock.elapsedTime) * 0.1;
+    }
+  });
+
+  return (
+    <group ref={meshRef} position={position}>
+      {/* Handle */}
+      <mesh position={[0, 0.5, 0]} castShadow>
+        <cylinderGeometry args={[0.04, 0.04, 1, 8]} />
+        <meshStandardMaterial color="#8B4513" roughness={0.6} />
+      </mesh>
+      {/* Wires */}
+      {[...Array(8)].map((_, i) => {
+        const angle = (i * Math.PI * 2) / 8;
+        return (
+          <mesh 
+            key={i}
+            position={[
+              Math.cos(angle) * 0.15,
+              -0.3,
+              Math.sin(angle) * 0.15
+            ]}
+            rotation={[0, 0, Math.PI / 6]}
+            castShadow
+          >
+            <cylinderGeometry args={[0.01, 0.01, 0.8, 8]} />
+            <meshStandardMaterial color="#C0C0C0" roughness={0.3} metalness={0.8} />
+          </mesh>
+        );
+      })}
+    </group>
+  );
+};
+
+// Particle System
+const ParticleSystem = () => {
+  const particlesRef = useRef<THREE.Points>(null);
+  const particleCount = 100;
+
+  const particles = new Float32Array(particleCount * 3);
+  const velocities = new Float32Array(particleCount * 3);
+
+  for (let i = 0; i < particleCount * 3; i += 3) {
+    particles[i] = (Math.random() - 0.5) * 10;
+    particles[i + 1] = Math.random() * 5;
+    particles[i + 2] = (Math.random() - 0.5) * 10;
+    
+    velocities[i] = (Math.random() - 0.5) * 0.02;
+    velocities[i + 1] = Math.random() * 0.02 + 0.01;
+    velocities[i + 2] = (Math.random() - 0.5) * 0.02;
+  }
+
+  useFrame(() => {
+    if (particlesRef.current) {
+      const positions = particlesRef.current.geometry.attributes.position.array as Float32Array;
+      
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] += velocities[i];
+        positions[i + 1] += velocities[i + 1];
+        positions[i + 2] += velocities[i + 2];
+
+        if (positions[i + 1] > 5) {
+          positions[i + 1] = 0;
+          positions[i] = (Math.random() - 0.5) * 10;
+          positions[i + 2] = (Math.random() - 0.5) * 10;
+        }
+      }
+      
+      particlesRef.current.geometry.attributes.position.needsUpdate = true;
+    }
+  });
+
+  return (
+    <points ref={particlesRef}>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          count={particleCount}
+          array={particles}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.05}
+        color="#FFFFFF"
+        transparent
+        opacity={0.6}
+        sizeAttenuation
+      />
+    </points>
+  );
+};
+
 // Main Scene Component
-const Scene = ({ mouseX, mouseY }: { mouseX: any, mouseY: any }) => {
+const Scene = ({ 
+  mouseX, 
+  mouseY,
+  bottomColor,
+  middleColor,
+  topColor,
+  berryColor
+}: { 
+  mouseX: any, 
+  mouseY: any,
+  bottomColor: string,
+  middleColor: string,
+  topColor: string,
+  berryColor: string
+}) => {
   const groupRef = useRef<THREE.Group>(null);
 
   useFrame(() => {
@@ -265,8 +509,18 @@ const Scene = ({ mouseX, mouseY }: { mouseX: any, mouseY: any }) => {
 
   return (
     <group ref={groupRef}>
+      {/* Particle effects */}
+      <ParticleSystem />
+      
       {/* Main centerpiece - Large Cake */}
-      <Cake position={[0, -0.5, 0]} scale={1.5} />
+      <Cake 
+        position={[0, -0.5, 0]} 
+        scale={1.5}
+        bottomColor={bottomColor}
+        middleColor={middleColor}
+        topColor={topColor}
+        berryColor={berryColor}
+      />
       
       {/* Surrounding cupcakes */}
       <Cupcake position={[-3, -0.5, 1]} scale={0.8} />
@@ -274,8 +528,19 @@ const Scene = ({ mouseX, mouseY }: { mouseX: any, mouseY: any }) => {
       <Cupcake position={[-2, -0.5, -2]} scale={0.7} />
       <Cupcake position={[2.5, -0.5, -2]} scale={0.7} />
       
+      {/* Donuts */}
+      <Donut position={[-3.5, 0, -1]} scale={0.9} />
+      <Donut position={[3.5, 0.5, -0.5]} scale={0.8} />
+      
+      {/* Cookies */}
+      <Cookie position={[-2.5, -0.3, 2]} scale={1.1} />
+      <Cookie position={[2, -0.2, 2.5]} scale={1} />
+      
       {/* Rolling Pin */}
       <RollingPin position={[0, 1.5, -1]} />
+      
+      {/* Whisk */}
+      <Whisk position={[-1.5, 1, -2]} />
       
       {/* Enhanced Lighting */}
       <ambientLight intensity={0.8} />
@@ -312,6 +577,12 @@ const BakeryScene3D = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
+  const [bottomColor, setBottomColor] = useState("#F4A460");
+  const [middleColor, setMiddleColor] = useState("#FFE4E1");
+  const [topColor, setTopColor] = useState("#FFB6C1");
+  const [berryColor, setBerryColor] = useState("#FF1493");
+  const [showCustomizer, setShowCustomizer] = useState(false);
+  
   const springConfig = { damping: 30, stiffness: 200 };
   const mouseXSpring = useSpring(mouseX, springConfig);
   const mouseYSpring = useSpring(mouseY, springConfig);
@@ -328,11 +599,26 @@ const BakeryScene3D = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [mouseX, mouseY]);
 
+  const presetColors = [
+    { name: "Classic Pink", bottom: "#F4A460", middle: "#FFE4E1", top: "#FFB6C1", berry: "#FF1493" },
+    { name: "Chocolate Dream", bottom: "#8B4513", middle: "#D2691E", top: "#A0522D", berry: "#FFFFFF" },
+    { name: "Mint Fresh", bottom: "#98FB98", middle: "#E0FFE0", top: "#90EE90", berry: "#FF69B4" },
+    { name: "Lavender Bliss", bottom: "#E6E6FA", middle: "#F0E6FF", top: "#DDA0DD", berry: "#9370DB" },
+    { name: "Sunset Orange", bottom: "#FF8C00", middle: "#FFD700", top: "#FFA500", berry: "#FF4500" },
+  ];
+
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
       <Canvas shadows>
         <PerspectiveCamera makeDefault position={[0, 2, 8]} fov={50} />
-        <Scene mouseX={mouseXSpring} mouseY={mouseYSpring} />
+        <Scene 
+          mouseX={mouseXSpring} 
+          mouseY={mouseYSpring}
+          bottomColor={bottomColor}
+          middleColor={middleColor}
+          topColor={topColor}
+          berryColor={berryColor}
+        />
         <Environment preset="sunset" />
         <OrbitControls 
           enableZoom={false} 
@@ -341,11 +627,107 @@ const BakeryScene3D = () => {
           minPolarAngle={Math.PI / 3}
         />
       </Canvas>
+      
+      {/* Cake Customizer Panel */}
+      <div className="absolute top-4 right-4 z-50">
+        <motion.button
+          onClick={() => setShowCustomizer(!showCustomizer)}
+          className="bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all font-semibold"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          {showCustomizer ? "Hide" : "Customize Cake"}
+        </motion.button>
+        
+        {showCustomizer && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.9 }}
+            className="mt-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 max-w-sm"
+          >
+            <h3 className="text-xl font-bold mb-4 text-gray-800">Cake Designer</h3>
+            
+            {/* Preset Colors */}
+            <div className="mb-4">
+              <p className="text-sm font-semibold mb-2 text-gray-700">Quick Presets:</p>
+              <div className="flex flex-wrap gap-2">
+                {presetColors.map((preset, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setBottomColor(preset.bottom);
+                      setMiddleColor(preset.middle);
+                      setTopColor(preset.top);
+                      setBerryColor(preset.berry);
+                    }}
+                    className="px-3 py-1 text-xs bg-gradient-to-r from-pink-100 to-purple-100 hover:from-pink-200 hover:to-purple-200 rounded-full transition-all"
+                  >
+                    {preset.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Custom Colors */}
+            <div className="space-y-3">
+              <div>
+                <label className="text-sm font-semibold text-gray-700 block mb-1">Bottom Layer</label>
+                <input 
+                  type="color" 
+                  value={bottomColor} 
+                  onChange={(e) => setBottomColor(e.target.value)}
+                  className="w-full h-10 rounded cursor-pointer"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-semibold text-gray-700 block mb-1">Middle Layer</label>
+                <input 
+                  type="color" 
+                  value={middleColor} 
+                  onChange={(e) => setMiddleColor(e.target.value)}
+                  className="w-full h-10 rounded cursor-pointer"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-semibold text-gray-700 block mb-1">Top Layer</label>
+                <input 
+                  type="color" 
+                  value={topColor} 
+                  onChange={(e) => setTopColor(e.target.value)}
+                  className="w-full h-10 rounded cursor-pointer"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-semibold text-gray-700 block mb-1">Berry Decorations</label>
+                <input 
+                  type="color" 
+                  value={berryColor} 
+                  onChange={(e) => setBerryColor(e.target.value)}
+                  className="w-full h-10 rounded cursor-pointer"
+                />
+              </div>
+            </div>
+            
+            <button
+              onClick={() => {
+                setBottomColor("#F4A460");
+                setMiddleColor("#FFE4E1");
+                setTopColor("#FFB6C1");
+                setBerryColor("#FF1493");
+              }}
+              className="mt-4 w-full bg-gradient-to-r from-pink-400 to-purple-400 text-white py-2 rounded-full hover:from-pink-500 hover:to-purple-500 transition-all font-semibold"
+            >
+              Reset to Default
+            </button>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 };
 
 export default BakeryScene3D;
-
-// Add missing import
-import { useState } from 'react';
