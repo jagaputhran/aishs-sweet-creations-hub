@@ -49,7 +49,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center justify-center md:justify-end">
                 <Mail className="w-5 h-5 mr-2 text-pink-400" />
-                <span className="text-gray-400">orders@dunkinDelicacies.com</span>
+                <span className="text-gray-400">ashwarya99a@gmail.com</span>
               </div>
               <div className="flex justify-center md:justify-end mt-4">
                 <a 
