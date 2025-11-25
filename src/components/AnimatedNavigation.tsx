@@ -76,7 +76,7 @@ const AnimatedNavigation = () => {
                   transition: { duration: 0.5 }
                 }}
               >
-                <span className="text-white font-bold text-lg">D</span>
+                <span className="text-white font-bold text-lg">Aishu's</span>
               </motion.div>
               <span className="text-2xl font-bold text-gray-800">
                 Dunkin Delicacies
