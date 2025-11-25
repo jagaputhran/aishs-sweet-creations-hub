@@ -302,6 +302,9 @@ const ChatbotWidget = () => {
     addUserMessage(formattedInput);
     
     if (currentStepData.dataKey) {
+      // Save current state to history before updating
+      setConversationHistory(prev => [...prev, { step: currentStep, data: orderData }]);
+      
       const updatedOrderData = {
         ...orderData,
         [currentStepData.dataKey!]: formattedInput
