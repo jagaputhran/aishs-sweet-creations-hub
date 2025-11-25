@@ -128,21 +128,36 @@ const ChatbotWidget = () => {
 
   useEffect(() => {
     if (isOpen && chatWindowRef.current) {
+      // Enable hardware acceleration
+      gsap.set(chatWindowRef.current, {
+        force3D: true,
+        transformPerspective: 1000,
+        backfaceVisibility: 'hidden',
+        willChange: 'transform'
+      });
+
       gsap.fromTo(
         chatWindowRef.current,
         { scale: 0, opacity: 0, y: 50 },
         { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.7)' }
       );
       
-      // Floating animation for chat window
+      // Floating animation for chat window - optimized for Samsung devices
       gsap.to(chatWindowRef.current, {
         y: -3,
         duration: 2,
         repeat: -1,
         yoyo: true,
-        ease: 'sine.inOut'
+        ease: 'sine.inOut',
+        force3D: true
       });
     }
+
+    return () => {
+      if (chatWindowRef.current) {
+        gsap.killTweensOf(chatWindowRef.current);
+      }
+    };
   }, [isOpen]);
 
   // Header cupcake bounce animation
@@ -321,12 +336,14 @@ const ChatbotWidget = () => {
 
   const toggleChat = () => {
     if (isOpen) {
+      gsap.killTweensOf(chatWindowRef.current);
       gsap.to(chatWindowRef.current, {
         scale: 0,
         opacity: 0,
         y: 50,
         duration: 0.3,
         ease: 'back.in(1.7)',
+        force3D: true,
         onComplete: () => setIsOpen(false)
       });
     } else {
@@ -405,7 +422,14 @@ const ChatbotWidget = () => {
         {isOpen && (
           <div
             ref={chatWindowRef}
-            className="fixed bottom-24 right-6 w-96 h-[600px] rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border-2 border-pink-200 backdrop-blur-xl bg-gradient-to-b from-cream/95 to-white/95"
+            className="fixed bottom-24 right-6 w-96 h-[600px] rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border-2 border-pink-200 bg-gradient-to-b from-cream/95 to-white/95"
+            style={{
+              transform: 'translateZ(0)',
+              WebkitBackfaceVisibility: 'hidden',
+              WebkitPerspective: 1000,
+              WebkitTransform: 'translateZ(0)',
+              willChange: 'transform'
+            }}
           >
             {/* Header - Glassmorphic */}
             <div 
