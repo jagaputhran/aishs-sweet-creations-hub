@@ -28,7 +28,7 @@ interface OrderData {
 
 const ChatbotWidget = () => {
   // Version identifier - update this when making breaking changes to force cache clear
-  const CHATBOT_VERSION = '1.0.2';
+  const CHATBOT_VERSION = '1.0.3';
   
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -623,7 +623,7 @@ const ChatbotWidget = () => {
                     </motion.div>
                   )}
                   
-                  <div className="relative flex flex-col">
+                  <div className="relative flex flex-col group">
                     {/* Timestamp on hover - positioned above message */}
                     <span className={`text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1 ${
                       message.isBot ? 'self-start' : 'self-end'
@@ -631,7 +631,7 @@ const ChatbotWidget = () => {
                       {new Date(parseInt(message.id)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                     <div
-                      className={`rounded-2xl p-3 shadow-lg group ${
+                      className={`rounded-2xl p-3 shadow-lg ${
                         message.isBot
                           ? 'bg-white/90 text-gray-800 rounded-tl-none border border-pink-100'
                           : 'bg-gradient-to-r from-pink-400 to-rose-500 text-white rounded-tr-none'
