@@ -6,6 +6,7 @@ import { Input } from './ui/input';
 import { useToast } from '@/hooks/use-toast';
 import gsap from 'gsap';
 import confetti from 'canvas-confetti';
+import ARCakePreview from './ARCakePreview';
 
 interface Message {
   id: string;
@@ -28,7 +29,7 @@ interface OrderData {
 
 const ChatbotWidget = () => {
   // Version identifier - update this when making breaking changes to force cache clear
-  const CHATBOT_VERSION = '1.0.4';
+  const CHATBOT_VERSION = '1.0.5';
   
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -37,6 +38,7 @@ const ChatbotWidget = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [userInput, setUserInput] = useState('');
   const [conversationHistory, setConversationHistory] = useState<{step: number, data: OrderData}[]>([]);
+  const [isAROpen, setIsAROpen] = useState(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -461,6 +463,15 @@ const ChatbotWidget = () => {
 
   return (
     <>
+      {/* AR Preview Modal */}
+      <ARCakePreview
+        isOpen={isAROpen}
+        onClose={() => setIsAROpen(false)}
+        cakeType={orderData.type || ''}
+        flavor={orderData.flavor || ''}
+        theme={orderData.theme || ''}
+      />
+
       {/* Floating Chat Bubble */}
       <motion.div
         className="fixed bottom-6 right-6 z-50"
@@ -680,12 +691,20 @@ const ChatbotWidget = () => {
                           <p className="text-gray-600">📱 {orderData.phone}</p>
                           <p className="text-gray-600">📅 {orderData.deliveryDate}</p>
                         </div>
-                        <button
-                          onClick={copyOrderSummary}
-                          className="w-full mt-2 py-2 px-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-700 transition-colors flex items-center justify-center gap-2"
-                        >
-                          📋 Copy Order Summary
-                        </button>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            onClick={copyOrderSummary}
+                            className="py-2 px-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-700 transition-colors flex items-center justify-center gap-2"
+                          >
+                            📋 Copy
+                          </button>
+                          <button
+                            onClick={() => setIsAROpen(true)}
+                            className="py-2 px-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-lg text-xs font-medium text-white transition-colors flex items-center justify-center gap-2"
+                          >
+                            📱 AR Preview
+                          </button>
+                        </div>
                         <p className="text-sm text-gray-700 pt-2">Let's send this to WhatsApp to finalize your order! 🎊</p>
                       </div>
                     ) : (
