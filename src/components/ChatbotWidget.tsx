@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Cake, Cookie, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Cake, Cookie, Sparkles, ShoppingBag } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useToast } from '@/hooks/use-toast';
 import gsap from 'gsap';
+import confetti from 'canvas-confetti';
 
 interface Message {
   id: string;
@@ -33,7 +34,34 @@ const ChatbotWidget = () => {
   const [userInput, setUserInput] = useState('');
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Load saved conversation from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('chatbot-state');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setMessages(parsed.messages || []);
+        setOrderData(parsed.orderData || {});
+        setCurrentStep(parsed.currentStep || 0);
+      } catch (e) {
+        console.error('Failed to load saved state');
+      }
+    }
+  }, []);
+
+  // Save conversation to localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('chatbot-state', JSON.stringify({
+        messages,
+        orderData,
+        currentStep
+      }));
+    }
+  }, [messages, orderData, currentStep]);
 
   const conversationFlow = [
     {
@@ -105,6 +133,32 @@ const ChatbotWidget = () => {
         { scale: 0, opacity: 0, y: 50 },
         { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.7)' }
       );
+      
+      // Floating animation for chat window
+      gsap.to(chatWindowRef.current, {
+        y: -3,
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut'
+      });
+    }
+  }, [isOpen]);
+
+  // Header cupcake bounce animation
+  useEffect(() => {
+    if (isOpen && headerRef.current) {
+      const cupcakeIcon = headerRef.current.querySelector('.cupcake-icon');
+      if (cupcakeIcon) {
+        gsap.to(cupcakeIcon, {
+          y: -5,
+          duration: 0.5,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+          repeatDelay: 29.5
+        });
+      }
     }
   }, [isOpen]);
 
@@ -179,6 +233,14 @@ const ChatbotWidget = () => {
   };
 
   const showSummaryAndSendToWhatsApp = () => {
+    // Trigger confetti
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#FFB6C1', '#FFC0CB', '#FF69B4', '#FFD700', '#FFA07A']
+    });
+
     const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${orderData.type}\n🍰 Flavor: ${orderData.flavor}\n🎉 Occasion: ${orderData.occasion}\n📏 Size: ${orderData.size}\n🎨 Theme: ${orderData.theme}\n💰 Budget: ${orderData.budget}\n\n👤 Name: ${orderData.name}\n📱 Phone: ${orderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
     
     addBotMessage(summary, [], 800);
@@ -220,6 +282,16 @@ const ChatbotWidget = () => {
     setMessages([]);
     setOrderData({});
     setCurrentStep(0);
+    localStorage.removeItem('chatbot-state');
+  };
+
+  const getCategoryIcon = (type: string) => {
+    if (type?.includes('Cake')) return '🎂';
+    if (type?.includes('Cupcake')) return '🧁';
+    if (type?.includes('Pastries')) return '🥐';
+    if (type?.includes('Cookie')) return '🍪';
+    if (type?.includes('Brownie')) return '🍫';
+    return '🎂';
   };
 
   const toggleChat = () => {
@@ -273,17 +345,71 @@ const ChatbotWidget = () => {
         </motion.button>
       </motion.div>
 
+      {/* Sprinkles Background */}
+      <AnimatePresence>
+        {isOpen && (
+          <div className="fixed bottom-24 right-6 w-96 h-[600px] pointer-events-none z-40">
+            {[...Array(20)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-2 h-2 rounded-full"
+                style={{
+                  background: ['#FFB6C1', '#FFC0CB', '#FFD700', '#87CEEB', '#98FB98'][i % 5],
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  y: [0, -20, 0],
+                  x: [0, Math.random() * 10 - 5, 0],
+                  rotate: [0, 360],
+                  opacity: [0.3, 0.7, 0.3],
+                }}
+                transition={{
+                  duration: 3 + Math.random() * 2,
+                  repeat: Infinity,
+                  delay: Math.random() * 2,
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </AnimatePresence>
+
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (
           <div
             ref={chatWindowRef}
-            className="fixed bottom-24 right-6 w-96 h-[600px] bg-gradient-to-b from-cream to-white rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border-2 border-pink-200"
+            className="fixed bottom-24 right-6 w-96 h-[600px] rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden border-2 border-pink-200 backdrop-blur-xl bg-gradient-to-b from-cream/95 to-white/95"
           >
-            {/* Header */}
-            <div className="bg-gradient-to-r from-pink-400 to-rose-500 p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+            {/* Header - Glassmorphic */}
+            <div 
+              ref={headerRef}
+              className="relative p-4 flex items-center justify-between overflow-hidden"
+              style={{
+                background: 'linear-gradient(135deg, rgba(244, 114, 182, 0.9), rgba(251, 113, 133, 0.9))',
+                backdropFilter: 'blur(10px)',
+              }}
+            >
+              {/* Gradient shine animation */}
+              <motion.div
+                className="absolute inset-0 opacity-30"
+                animate={{
+                  background: [
+                    'linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent)',
+                    'linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent)',
+                  ],
+                  x: ['-100%', '200%'],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatDelay: 2,
+                }}
+              />
+              
+              <div className="flex items-center gap-3 relative z-10">
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center cupcake-icon">
                   <Cake className="w-6 h-6 text-pink-500" />
                 </div>
                 <div>
@@ -293,66 +419,154 @@ const ChatbotWidget = () => {
               </div>
               <button
                 onClick={toggleChat}
-                className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
+                className="text-white hover:bg-white/20 rounded-full p-2 transition-colors relative z-10"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
+            {/* Progress Indicator */}
+            {currentStep > 0 && currentStep < conversationFlow.length && (
+              <div className="px-4 py-2 bg-pink-50 border-b border-pink-100">
+                <div className="flex items-center justify-between text-xs text-pink-600">
+                  <span className="font-medium">Step {currentStep + 1} of {conversationFlow.length}</span>
+                  <div className="flex gap-1">
+                    {conversationFlow.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          index <= currentStep ? 'bg-pink-400' : 'bg-pink-200'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((message) => (
-                <div
+              {messages.map((message, msgIndex) => (
+                <motion.div
                   key={message.id}
-                  className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} items-end gap-2`}
                 >
+                  {/* Category Icon for bot messages */}
+                  {message.isBot && msgIndex > 0 && orderData.type && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.2, type: 'spring' }}
+                      className="text-2xl mb-1"
+                    >
+                      {getCategoryIcon(orderData.type)}
+                    </motion.div>
+                  )}
+                  
                   <div
-                    className={`max-w-[80%] rounded-2xl p-3 ${
+                    className={`max-w-[80%] rounded-2xl p-3 shadow-lg ${
                       message.isBot
-                        ? 'bg-pink-50 text-gray-800 rounded-tl-none'
+                        ? 'bg-white/90 text-gray-800 rounded-tl-none border border-pink-100'
                         : 'bg-gradient-to-r from-pink-400 to-rose-500 text-white rounded-tr-none'
                     }`}
+                    style={message.isBot ? {
+                      boxShadow: '0 4px 12px rgba(255, 182, 193, 0.3)',
+                    } : undefined}
                   >
-                    <p className="text-sm whitespace-pre-line">{message.text}</p>
+                    {/* Visual Order Summary Card */}
+                    {message.text.includes('Perfect! Here\'s your order summary:') ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 mb-3">
+                          <ShoppingBag className="w-5 h-5 text-pink-500" />
+                          <h4 className="font-bold text-pink-600">Your Custom Order</h4>
+                        </div>
+                        <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl p-3 space-y-2 border-2 border-pink-200">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{getCategoryIcon(orderData.type)}</span>
+                            <span className="font-semibold text-gray-800">{orderData.type}</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                              <span className="text-gray-600">Flavor:</span>
+                              <p className="font-medium text-gray-800">{orderData.flavor}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Occasion:</span>
+                              <p className="font-medium text-gray-800">{orderData.occasion}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Size:</span>
+                              <p className="font-medium text-gray-800">{orderData.size}</p>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Theme:</span>
+                              <p className="font-medium text-gray-800">{orderData.theme}</p>
+                            </div>
+                          </div>
+                          <div className="pt-2 border-t border-pink-200">
+                            <span className="text-gray-600 text-xs">Budget:</span>
+                            <p className="font-semibold text-pink-600">{orderData.budget}</p>
+                          </div>
+                        </div>
+                        <div className="bg-blue-50 rounded-lg p-2 text-xs border border-blue-200">
+                          <p className="font-medium text-gray-700">👤 {orderData.name}</p>
+                          <p className="text-gray-600">📱 {orderData.phone}</p>
+                        </div>
+                        <p className="text-sm text-gray-700 pt-2">Let's send this to WhatsApp to finalize your order! 🎊</p>
+                      </div>
+                    ) : (
+                      <p className="text-sm whitespace-pre-line">{message.text}</p>
+                    )}
+                    
                     {message.quickReplies && message.quickReplies.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-3">
                         {message.quickReplies.map((reply, index) => (
-                          <button
+                          <motion.button
                             key={index}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => handleQuickReply(reply)}
-                            className="bg-white text-pink-500 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-pink-100 transition-colors border border-pink-200"
+                            className="bg-white text-pink-500 px-3 py-1.5 rounded-full text-xs font-medium hover:bg-pink-100 transition-all border-2 border-pink-200 hover:border-pink-300 hover:shadow-md"
                           >
                             {reply}
-                          </button>
+                          </motion.button>
                         ))}
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
               ))}
 
               {isTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-pink-50 rounded-2xl rounded-tl-none p-3">
+                <motion.div 
+                  className="flex justify-start items-end gap-2"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <div className="text-2xl mb-1">🧁</div>
+                  <div className="bg-white/90 rounded-2xl rounded-tl-none p-3 shadow-lg border border-pink-100">
                     <div className="flex gap-1">
                       <motion.div
                         className="w-2 h-2 bg-pink-400 rounded-full"
-                        animate={{ y: [0, -5, 0] }}
+                        animate={{ y: [0, -5, 0], opacity: [0.3, 1, 0.3] }}
                         transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
                       />
                       <motion.div
                         className="w-2 h-2 bg-pink-400 rounded-full"
-                        animate={{ y: [0, -5, 0] }}
+                        animate={{ y: [0, -5, 0], opacity: [0.3, 1, 0.3] }}
                         transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
                       />
                       <motion.div
                         className="w-2 h-2 bg-pink-400 rounded-full"
-                        animate={{ y: [0, -5, 0] }}
+                        animate={{ y: [0, -5, 0], opacity: [0.3, 1, 0.3] }}
                         transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
                       />
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )}
 
               <div ref={messagesEndRef} />
