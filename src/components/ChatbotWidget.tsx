@@ -127,18 +127,9 @@ const ChatbotWidget = () => {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      // Add welcome message with helpful tips
-      setTimeout(() => {
-        addBotMessage(
-          "💡 Tips: You can go back to change answers, or start fresh anytime!",
-          [],
-          300
-        );
-      }, 100);
-      
       setTimeout(() => {
         addBotMessage(conversationFlow[0].question, conversationFlow[0].quickReplies);
-      }, 1500);
+      }, 800);
     }
   }, [isOpen]);
 
