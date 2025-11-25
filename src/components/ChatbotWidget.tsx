@@ -28,7 +28,7 @@ interface OrderData {
 
 const ChatbotWidget = () => {
   // Version identifier - update this when making breaking changes to force cache clear
-  const CHATBOT_VERSION = '1.0.1';
+  const CHATBOT_VERSION = '1.0.2';
   
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -623,23 +623,23 @@ const ChatbotWidget = () => {
                     </motion.div>
                   )}
                   
-                  <div
-                    className={`max-w-[80%] rounded-2xl p-3 shadow-lg group relative ${
-                      message.isBot
-                        ? 'bg-white/90 text-gray-800 rounded-tl-none border border-pink-100'
-                        : 'bg-gradient-to-r from-pink-400 to-rose-500 text-white rounded-tr-none'
-                    }`}
-                    style={message.isBot ? {
-                      boxShadow: '0 4px 12px rgba(255, 182, 193, 0.3)',
-                    } : undefined}
-                    title={new Date(parseInt(message.id)).toLocaleTimeString()}
-                  >
-                    {/* Timestamp on hover - positioned differently for bot vs user */}
-                    <span className={`absolute -top-6 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${
-                      message.isBot ? 'right-0' : 'left-0'
+                  <div className="relative flex flex-col">
+                    {/* Timestamp on hover - positioned above message */}
+                    <span className={`text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1 ${
+                      message.isBot ? 'self-start' : 'self-end'
                     }`}>
                       {new Date(parseInt(message.id)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
+                    <div
+                      className={`rounded-2xl p-3 shadow-lg group ${
+                        message.isBot
+                          ? 'bg-white/90 text-gray-800 rounded-tl-none border border-pink-100'
+                          : 'bg-gradient-to-r from-pink-400 to-rose-500 text-white rounded-tr-none'
+                      }`}
+                      style={message.isBot ? {
+                        boxShadow: '0 4px 12px rgba(255, 182, 193, 0.3)',
+                      } : undefined}
+                    >
                     {/* Visual Order Summary Card */}
                     {message.text.includes('Perfect! Here\'s your order summary:') ? (
                       <div className="space-y-3">
@@ -708,6 +708,7 @@ const ChatbotWidget = () => {
                       </div>
                     )}
                   </div>
+                </div>
                 </motion.div>
               ))}
 
