@@ -27,6 +27,9 @@ interface OrderData {
 }
 
 const ChatbotWidget = () => {
+  // Version identifier - update this when making breaking changes to force cache clear
+  const CHATBOT_VERSION = '1.0.0';
+  
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [orderData, setOrderData] = useState<OrderData>({});
@@ -39,9 +42,19 @@ const ChatbotWidget = () => {
   const headerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  // Load saved conversation from localStorage
+  // Load saved conversation from localStorage with version check
   useEffect(() => {
+    const savedVersion = localStorage.getItem('chatbot-version');
     const saved = localStorage.getItem('chatbot-state');
+    
+    // Clear cache if version mismatch
+    if (savedVersion !== CHATBOT_VERSION) {
+      localStorage.removeItem('chatbot-state');
+      localStorage.setItem('chatbot-version', CHATBOT_VERSION);
+      console.log('Chatbot cache cleared due to version update');
+      return;
+    }
+    
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -50,6 +63,7 @@ const ChatbotWidget = () => {
         setCurrentStep(parsed.currentStep || 0);
       } catch (e) {
         console.error('Failed to load saved state');
+        localStorage.removeItem('chatbot-state');
       }
     }
   }, []);
