@@ -28,7 +28,7 @@ interface OrderData {
 
 const ChatbotWidget = () => {
   // Version identifier - update this when making breaking changes to force cache clear
-  const CHATBOT_VERSION = '1.0.0';
+  const CHATBOT_VERSION = '1.0.1';
   
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -236,24 +236,27 @@ const ChatbotWidget = () => {
     // Handle go back
     if (reply === '⬅️ Go Back' && conversationHistory.length > 0) {
       const previous = conversationHistory[conversationHistory.length - 1];
+      
+      // Remove last 2 messages (user answer + current bot question)
+      setMessages(prev => {
+        const newMessages = prev.slice(0, -2);
+        // Update the last message (previous question) to include/exclude Go Back button
+        if (newMessages.length > 0) {
+          const lastMsg = newMessages[newMessages.length - 1];
+          if (lastMsg.isBot) {
+            // Update quick replies for the previous step
+            const replies = previous.step > 0 
+              ? [...conversationFlow[previous.step].quickReplies, '⬅️ Go Back']
+              : conversationFlow[previous.step].quickReplies;
+            lastMsg.quickReplies = replies;
+          }
+        }
+        return newMessages;
+      });
+      
       setCurrentStep(previous.step);
       setOrderData(previous.data);
       setConversationHistory(prev => prev.slice(0, -1));
-      // Remove last 2 messages (user answer + bot question)
-      setMessages(prev => prev.slice(0, -2));
-      
-      // Re-add the previous question with Go Back button if not first step
-      setTimeout(() => {
-        const replies = previous.step > 0 
-          ? [...conversationFlow[previous.step].quickReplies, '⬅️ Go Back']
-          : conversationFlow[previous.step].quickReplies;
-        
-        addBotMessage(
-          conversationFlow[previous.step].question,
-          replies,
-          300
-        );
-      }, 100);
       
       toast({
         title: "Step Reverted ↩️",
