@@ -39,7 +39,7 @@ const ChatbotWidget = () => {
     {
       key: 'greeting',
       question: "Hi there! 🧁 Welcome to Aishu's Dunkin Delicacies! I'm here to help you create your perfect custom order. What would you like to order today?",
-      quickReplies: ['🍰 Cake', '🧁 Cupcakes', '🥐 Pastries', '🍪 Cookies'],
+      quickReplies: ['🍰 Cake', '🧁 Cupcakes', '🥐 Pastries', '🍪 Cookies','🍫🎁 Brownie Box'],
       dataKey: 'type'
     },
     {
