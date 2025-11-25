@@ -236,6 +236,20 @@ const ChatbotWidget = () => {
       setConversationHistory(prev => prev.slice(0, -1));
       // Remove last 2 messages (user answer + bot question)
       setMessages(prev => prev.slice(0, -2));
+      
+      // Re-add the previous question with Go Back button if not first step
+      setTimeout(() => {
+        const replies = previous.step > 0 
+          ? [...conversationFlow[previous.step].quickReplies, '⬅️ Go Back']
+          : conversationFlow[previous.step].quickReplies;
+        
+        addBotMessage(
+          conversationFlow[previous.step].question,
+          replies,
+          300
+        );
+      }, 100);
+      
       toast({
         title: "Step Reverted ↩️",
         description: "You can change your previous answer"
