@@ -188,13 +188,15 @@ const ChatbotWidget = () => {
     const currentStepData = conversationFlow[currentStep];
     
     if (currentStepData.dataKey) {
-      setOrderData(prev => ({
-        ...prev,
+      const updatedOrderData = {
+        ...orderData,
         [currentStepData.dataKey!]: reply
-      }));
+      };
+      setOrderData(updatedOrderData);
+      moveToNextStep(updatedOrderData);
+    } else {
+      moveToNextStep();
     }
-
-    moveToNextStep();
   };
 
   const handleInputSubmit = (e: React.FormEvent) => {
@@ -205,17 +207,21 @@ const ChatbotWidget = () => {
     const currentStepData = conversationFlow[currentStep];
     
     if (currentStepData.dataKey) {
-      setOrderData(prev => ({
-        ...prev,
+      const updatedOrderData = {
+        ...orderData,
         [currentStepData.dataKey!]: userInput
-      }));
+      };
+      setOrderData(updatedOrderData);
+      
+      setUserInput('');
+      moveToNextStep(updatedOrderData);
+    } else {
+      setUserInput('');
+      moveToNextStep();
     }
-
-    setUserInput('');
-    moveToNextStep();
   };
 
-  const moveToNextStep = () => {
+  const moveToNextStep = (currentOrderData?: OrderData) => {
     const nextStep = currentStep + 1;
     
     if (nextStep < conversationFlow.length) {
@@ -228,11 +234,14 @@ const ChatbotWidget = () => {
         );
       }, 500);
     } else {
-      showSummaryAndSendToWhatsApp();
+      showSummaryAndSendToWhatsApp(currentOrderData);
     }
   };
 
-  const showSummaryAndSendToWhatsApp = () => {
+  const showSummaryAndSendToWhatsApp = (currentOrderData?: OrderData) => {
+    // Use the passed order data or fall back to state
+    const finalOrderData = currentOrderData || orderData;
+    
     // Trigger confetti
     confetti({
       particleCount: 100,
@@ -241,27 +250,30 @@ const ChatbotWidget = () => {
       colors: ['#FFB6C1', '#FFC0CB', '#FF69B4', '#FFD700', '#FFA07A']
     });
 
-    const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${orderData.type}\n🍰 Flavor: ${orderData.flavor}\n🎉 Occasion: ${orderData.occasion}\n📏 Size: ${orderData.size}\n🎨 Theme: ${orderData.theme}\n💰 Budget: ${orderData.budget}\n\n👤 Name: ${orderData.name}\n📱 Phone: ${orderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
+    const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${finalOrderData.type}\n🍰 Flavor: ${finalOrderData.flavor}\n🎉 Occasion: ${finalOrderData.occasion}\n📏 Size: ${finalOrderData.size}\n🎨 Theme: ${finalOrderData.theme}\n💰 Budget: ${finalOrderData.budget}\n\n👤 Name: ${finalOrderData.name}\n📱 Phone: ${finalOrderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
     
     addBotMessage(summary, [], 800);
     
     setTimeout(() => {
-      sendToWhatsApp();
+      sendToWhatsApp(finalOrderData);
     }, 2000);
   };
 
-  const sendToWhatsApp = () => {
+  const sendToWhatsApp = (finalOrderData?: OrderData) => {
+    // Use the passed order data or fall back to state
+    const dataToSend = finalOrderData || orderData;
+    
     const message = `🧁 *Custom Order Request from Chatbot*\n\n` +
       `*Customer Details:*\n` +
-      `Name: ${orderData.name}\n` +
-      `Phone: ${orderData.phone}\n\n` +
+      `Name: ${dataToSend.name}\n` +
+      `Phone: ${dataToSend.phone}\n\n` +
       `*Order Details:*\n` +
-      `Type: ${orderData.type}\n` +
-      `Flavor: ${orderData.flavor}\n` +
-      `Occasion: ${orderData.occasion}\n` +
-      `Size: ${orderData.size}\n` +
-      `Theme: ${orderData.theme}\n` +
-      `Budget: ${orderData.budget}\n\n` +
+      `Type: ${dataToSend.type}\n` +
+      `Flavor: ${dataToSend.flavor}\n` +
+      `Occasion: ${dataToSend.occasion}\n` +
+      `Size: ${dataToSend.size}\n` +
+      `Theme: ${dataToSend.theme}\n` +
+      `Budget: ${dataToSend.budget}\n\n` +
       `Looking forward to creating something special! 🎂✨`;
 
     const whatsappUrl = `https://wa.me/918015102020?text=${encodeURIComponent(message)}`;
