@@ -609,8 +609,10 @@ const ChatbotWidget = () => {
                     } : undefined}
                     title={new Date(parseInt(message.id)).toLocaleTimeString()}
                   >
-                    {/* Timestamp on hover */}
-                    <span className="absolute -top-6 right-0 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {/* Timestamp on hover - positioned differently for bot vs user */}
+                    <span className={`absolute -top-6 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${
+                      message.isBot ? 'right-0' : 'left-0'
+                    }`}>
                       {new Date(parseInt(message.id)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                     {/* Visual Order Summary Card */}
@@ -651,7 +653,7 @@ const ChatbotWidget = () => {
                         <div className="bg-blue-50 rounded-lg p-2 text-xs border border-blue-200">
                           <p className="font-medium text-gray-700">👤 {orderData.name}</p>
                           <p className="text-gray-600">📱 {orderData.phone}</p>
-                          <p className="text-gray-600"> {orderData.deliveryDate}</p>
+                          <p className="text-gray-600">📅 {orderData.deliveryDate}</p>
                         </div>
                         <button
                           onClick={copyOrderSummary}
