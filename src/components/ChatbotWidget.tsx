@@ -23,6 +23,7 @@ interface OrderData {
   budget?: string;
   name?: string;
   phone?: string;
+  deliveryDate?: string;
 }
 
 const ChatbotWidget = () => {
@@ -109,10 +110,17 @@ const ChatbotWidget = () => {
     },
     {
       key: 'phone',
-      question: "And your phone number so we can reach you?",
+      question: "And your phone number so we can reach you? (10 digits)",
       quickReplies: [],
       dataKey: 'phone',
-      requiresInput: true
+      requiresInput: true,
+      validation: (value: string) => /^[6-9]\d{9}$/.test(value)
+    },
+    {
+      key: 'deliveryDate',
+      question: "When would you like to receive your order?",
+      quickReplies: ['📅 Tomorrow', '📅 In 2 days', '📅 In 3 days', '📅 This Weekend', '💬 Tell me later'],
+      dataKey: 'deliveryDate'
     }
   ];
 
@@ -227,13 +235,32 @@ const ChatbotWidget = () => {
     e.preventDefault();
     if (!userInput.trim()) return;
 
-    addUserMessage(userInput);
     const currentStepData = conversationFlow[currentStep];
+    
+    // Validate input if validation function exists
+    if (currentStepData.validation && !currentStepData.validation(userInput.trim())) {
+      toast({
+        title: "Invalid Input 😅",
+        description: currentStepData.key === 'phone' 
+          ? "Please enter a valid 10-digit Indian mobile number starting with 6-9"
+          : "Please check your input and try again",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Auto-format phone number
+    let formattedInput = userInput.trim();
+    if (currentStepData.key === 'phone') {
+      formattedInput = userInput.replace(/\D/g, '').slice(0, 10);
+    }
+
+    addUserMessage(formattedInput);
     
     if (currentStepData.dataKey) {
       const updatedOrderData = {
         ...orderData,
-        [currentStepData.dataKey!]: userInput
+        [currentStepData.dataKey!]: formattedInput
       };
       setOrderData(updatedOrderData);
       
@@ -274,7 +301,7 @@ const ChatbotWidget = () => {
       colors: ['#FFB6C1', '#FFC0CB', '#FF69B4', '#FFD700', '#FFA07A']
     });
 
-    const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${finalOrderData.type}\n🍰 Flavor: ${finalOrderData.flavor}\n🎉 Occasion: ${finalOrderData.occasion}\n📏 Size: ${finalOrderData.size}\n🎨 Theme: ${finalOrderData.theme}\n💰 Budget: ${finalOrderData.budget}\n\n👤 Name: ${finalOrderData.name}\n📱 Phone: ${finalOrderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
+    const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${finalOrderData.type}\n🍰 Flavor: ${finalOrderData.flavor}\n🎉 Occasion: ${finalOrderData.occasion}\n📏 Size: ${finalOrderData.size}\n🎨 Theme: ${finalOrderData.theme}\n💰 Budget: ${finalOrderData.budget}\n📅 Delivery: ${finalOrderData.deliveryDate}\n\n👤 Name: ${finalOrderData.name}\n📱 Phone: ${finalOrderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
     
     addBotMessage(summary, [], 800);
     
@@ -290,7 +317,8 @@ const ChatbotWidget = () => {
     const message = `🧁 *Custom Order Request from Chatbot*\n\n` +
       `*Customer Details:*\n` +
       `Name: ${dataToSend.name}\n` +
-      `Phone: ${dataToSend.phone}\n\n` +
+      `Phone: ${dataToSend.phone}\n` +
+      `Preferred Delivery: ${dataToSend.deliveryDate}\n\n` +
       `*Order Details:*\n` +
       `Type: ${dataToSend.type}\n` +
       `Flavor: ${dataToSend.flavor}\n` +
@@ -563,6 +591,7 @@ const ChatbotWidget = () => {
                         <div className="bg-blue-50 rounded-lg p-2 text-xs border border-blue-200">
                           <p className="font-medium text-gray-700">👤 {orderData.name}</p>
                           <p className="text-gray-600">📱 {orderData.phone}</p>
+                          <p className="text-gray-600">📅 {orderData.deliveryDate}</p>
                         </div>
                         <p className="text-sm text-gray-700 pt-2">Let's send this to WhatsApp to finalize your order! 🎊</p>
                       </div>
@@ -627,18 +656,46 @@ const ChatbotWidget = () => {
                 <div className="flex gap-2">
                   <Input
                     value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    placeholder="Type your answer..."
+                    onChange={(e) => {
+                      // Auto-format phone number as user types
+                      if (conversationFlow[currentStep].key === 'phone') {
+                        const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        setUserInput(digits);
+                      } else {
+                        setUserInput(e.target.value);
+                      }
+                    }}
+                    placeholder={
+                      conversationFlow[currentStep].key === 'phone' 
+                        ? "Enter 10-digit number..." 
+                        : conversationFlow[currentStep].key === 'name'
+                        ? "Enter your name..."
+                        : "Type your answer..."
+                    }
+                    type={conversationFlow[currentStep].key === 'phone' ? 'tel' : 'text'}
+                    maxLength={conversationFlow[currentStep].key === 'phone' ? 10 : undefined}
                     className="flex-1 border-pink-200 focus:border-pink-400"
                     autoFocus
                   />
                   <Button
                     type="submit"
                     className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600"
+                    disabled={conversationFlow[currentStep].key === 'phone' && userInput.length !== 10}
                   >
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>
+                {conversationFlow[currentStep].key === 'phone' && userInput.length > 0 && (
+                  <p className={`text-xs mt-2 ${
+                    userInput.length === 10 && /^[6-9]/.test(userInput) 
+                      ? 'text-green-600' 
+                      : 'text-gray-500'
+                  }`}>
+                    {userInput.length === 10 && /^[6-9]/.test(userInput) 
+                      ? '✓ Valid phone number' 
+                      : `${userInput.length}/10 digits`}
+                  </p>
+                )}
               </form>
             )}
           </div>
