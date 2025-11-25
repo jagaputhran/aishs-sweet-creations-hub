@@ -9,6 +9,7 @@ import Testimonials from '../components/Testimonials';
 import InstagramFeed from '../components/InstagramFeed';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
+import ChatbotWidget from '../components/ChatbotWidget';
 
 const Index = () => {
   return (
@@ -29,6 +30,7 @@ const Index = () => {
         <Contact />
       </div>
       <Footer />
+      <ChatbotWidget />
     </div>
   );
 };
