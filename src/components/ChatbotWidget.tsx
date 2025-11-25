@@ -184,6 +184,15 @@ const ChatbotWidget = () => {
   };
 
   const handleQuickReply = (reply: string) => {
+    // Check if it's a restart request
+    if (reply === '🔄 Start New Order') {
+      resetChat();
+      setTimeout(() => {
+        addBotMessage(conversationFlow[0].question, conversationFlow[0].quickReplies);
+      }, 300);
+      return;
+    }
+
     addUserMessage(reply);
     const currentStepData = conversationFlow[currentStep];
     
@@ -284,9 +293,13 @@ const ChatbotWidget = () => {
       description: "Your order details have been prepared. Complete your order on WhatsApp!",
     });
 
+    // Add a completion message instead of resetting
     setTimeout(() => {
-      resetChat();
-      setIsOpen(false);
+      addBotMessage(
+        "✅ Your order has been sent to WhatsApp! If you'd like to place another order, just click the 'Start New Order' button below.",
+        ['🔄 Start New Order'],
+        800
+      );
     }, 2000);
   };
 
