@@ -301,7 +301,7 @@ const ChatbotWidget = () => {
       colors: ['#FFB6C1', '#FFC0CB', '#FF69B4', '#FFD700', '#FFA07A']
     });
 
-    const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${finalOrderData.type}\n🍰 Flavor: ${finalOrderData.flavor}\n🎉 Occasion: ${finalOrderData.occasion}\n📏 Size: ${finalOrderData.size}\n🎨 Theme: ${finalOrderData.theme}\n💰 Budget: ${finalOrderData.budget}\n📅 Delivery: ${finalOrderData.deliveryDate}\n\n👤 Name: ${finalOrderData.name}\n📱 Phone: ${finalOrderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
+    const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${finalOrderData.type}\n🍰 Flavor: ${finalOrderData.flavor}\n🎉 Occasion: ${finalOrderData.occasion}\n📏 Size: ${finalOrderData.size}\n🎨 Theme: ${finalOrderData.theme}\n💰 Budget: ${finalOrderData.budget}\n Delivery: ${finalOrderData.deliveryDate}\n\n👤 Name: ${finalOrderData.name}\n📱 Phone: ${finalOrderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
     
     addBotMessage(summary, [], 800);
     
