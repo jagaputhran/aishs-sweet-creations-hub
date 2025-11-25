@@ -33,6 +33,7 @@ const ChatbotWidget = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [userInput, setUserInput] = useState('');
+  const [conversationHistory, setConversationHistory] = useState<{step: number, data: OrderData}[]>([]);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -126,7 +127,18 @@ const ChatbotWidget = () => {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      addBotMessage(conversationFlow[0].question, conversationFlow[0].quickReplies);
+      // Add welcome message with helpful tips
+      setTimeout(() => {
+        addBotMessage(
+          "💡 Tips: You can go back to change answers, or start fresh anytime!",
+          [],
+          300
+        );
+      }, 100);
+      
+      setTimeout(() => {
+        addBotMessage(conversationFlow[0].question, conversationFlow[0].quickReplies);
+      }, 1500);
     }
   }, [isOpen]);
 
@@ -216,10 +228,28 @@ const ChatbotWidget = () => {
       return;
     }
 
+    // Handle go back
+    if (reply === '⬅️ Go Back' && conversationHistory.length > 0) {
+      const previous = conversationHistory[conversationHistory.length - 1];
+      setCurrentStep(previous.step);
+      setOrderData(previous.data);
+      setConversationHistory(prev => prev.slice(0, -1));
+      // Remove last 2 messages (user answer + bot question)
+      setMessages(prev => prev.slice(0, -2));
+      toast({
+        title: "Step Reverted ↩️",
+        description: "You can change your previous answer"
+      });
+      return;
+    }
+
     addUserMessage(reply);
     const currentStepData = conversationFlow[currentStep];
     
     if (currentStepData.dataKey) {
+      // Save current state to history before updating
+      setConversationHistory(prev => [...prev, { step: currentStep, data: orderData }]);
+      
       const updatedOrderData = {
         ...orderData,
         [currentStepData.dataKey!]: reply
@@ -278,9 +308,14 @@ const ChatbotWidget = () => {
     if (nextStep < conversationFlow.length) {
       setCurrentStep(nextStep);
       setTimeout(() => {
+        // Add "Go Back" option if not the first step
+        const replies = nextStep > 0 
+          ? [...conversationFlow[nextStep].quickReplies, '⬅️ Go Back']
+          : conversationFlow[nextStep].quickReplies;
+        
         addBotMessage(
           conversationFlow[nextStep].question,
-          conversationFlow[nextStep].quickReplies,
+          replies,
           800
         );
       }, 500);
@@ -301,7 +336,7 @@ const ChatbotWidget = () => {
       colors: ['#FFB6C1', '#FFC0CB', '#FF69B4', '#FFD700', '#FFA07A']
     });
 
-    const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${finalOrderData.type}\n🍰 Flavor: ${finalOrderData.flavor}\n🎉 Occasion: ${finalOrderData.occasion}\n📏 Size: ${finalOrderData.size}\n🎨 Theme: ${finalOrderData.theme}\n💰 Budget: ${finalOrderData.budget}\n Delivery: ${finalOrderData.deliveryDate}\n\n👤 Name: ${finalOrderData.name}\n📱 Phone: ${finalOrderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
+    const summary = `Perfect! Here's your order summary:\n\n🎂 Type: ${finalOrderData.type}\n🍰 Flavor: ${finalOrderData.flavor}\n🎉 Occasion: ${finalOrderData.occasion}\n📏 Size: ${finalOrderData.size}\n🎨 Theme: ${finalOrderData.theme}\n💰 Budget: ${finalOrderData.budget}\n📅 Delivery: ${finalOrderData.deliveryDate}\n\n👤 Name: ${finalOrderData.name}\n📱 Phone: ${finalOrderData.phone}\n\nLet's send this to WhatsApp to finalize your order! 🎊`;
     
     addBotMessage(summary, [], 800);
     
@@ -350,7 +385,27 @@ const ChatbotWidget = () => {
     setMessages([]);
     setOrderData({});
     setCurrentStep(0);
+    setConversationHistory([]);
     localStorage.removeItem('chatbot-state');
+  };
+
+  const copyOrderSummary = () => {
+    const summary = `Order Details:\n` +
+      `Type: ${orderData.type}\n` +
+      `Flavor: ${orderData.flavor}\n` +
+      `Occasion: ${orderData.occasion}\n` +
+      `Size: ${orderData.size}\n` +
+      `Theme: ${orderData.theme}\n` +
+      `Budget: ${orderData.budget}\n` +
+      `Delivery: ${orderData.deliveryDate}\n\n` +
+      `Name: ${orderData.name}\n` +
+      `Phone: ${orderData.phone}`;
+    
+    navigator.clipboard.writeText(summary);
+    toast({
+      title: "Copied! 📋",
+      description: "Order summary copied to clipboard"
+    });
   };
 
   const getCategoryIcon = (type: string) => {
@@ -544,7 +599,7 @@ const ChatbotWidget = () => {
                   )}
                   
                   <div
-                    className={`max-w-[80%] rounded-2xl p-3 shadow-lg ${
+                    className={`max-w-[80%] rounded-2xl p-3 shadow-lg group relative ${
                       message.isBot
                         ? 'bg-white/90 text-gray-800 rounded-tl-none border border-pink-100'
                         : 'bg-gradient-to-r from-pink-400 to-rose-500 text-white rounded-tr-none'
@@ -552,7 +607,12 @@ const ChatbotWidget = () => {
                     style={message.isBot ? {
                       boxShadow: '0 4px 12px rgba(255, 182, 193, 0.3)',
                     } : undefined}
+                    title={new Date(parseInt(message.id)).toLocaleTimeString()}
                   >
+                    {/* Timestamp on hover */}
+                    <span className="absolute -top-6 right-0 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {new Date(parseInt(message.id)).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                     {/* Visual Order Summary Card */}
                     {message.text.includes('Perfect! Here\'s your order summary:') ? (
                       <div className="space-y-3">
@@ -591,8 +651,14 @@ const ChatbotWidget = () => {
                         <div className="bg-blue-50 rounded-lg p-2 text-xs border border-blue-200">
                           <p className="font-medium text-gray-700">👤 {orderData.name}</p>
                           <p className="text-gray-600">📱 {orderData.phone}</p>
-                          <p className="text-gray-600">📅 {orderData.deliveryDate}</p>
+                          <p className="text-gray-600"> {orderData.deliveryDate}</p>
                         </div>
+                        <button
+                          onClick={copyOrderSummary}
+                          className="w-full mt-2 py-2 px-3 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-700 transition-colors flex items-center justify-center gap-2"
+                        >
+                          📋 Copy Order Summary
+                        </button>
                         <p className="text-sm text-gray-700 pt-2">Let's send this to WhatsApp to finalize your order! 🎊</p>
                       </div>
                     ) : (
@@ -694,6 +760,11 @@ const ChatbotWidget = () => {
                     {userInput.length === 10 && /^[6-9]/.test(userInput) 
                       ? '✓ Valid phone number' 
                       : `${userInput.length}/10 digits`}
+                  </p>
+                )}
+                {conversationFlow[currentStep].key === 'name' && userInput.length > 0 && (
+                  <p className="text-xs mt-2 text-gray-500">
+                    {userInput.length} characters
                   </p>
                 )}
               </form>
