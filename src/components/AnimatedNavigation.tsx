@@ -70,13 +70,13 @@ const AnimatedNavigation = () => {
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               <motion.div
-                className="w-10 h-10 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center"
+                className="w-16 h-16 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full flex items-center justify-center"
                 whileHover={{ 
                   rotate: [0, -10, 10, -10, 0],
                   transition: { duration: 0.5 }
                 }}
               >
-                <span className="text-white font-bold text-lg">Aishu's</span>
+                <span className="text-white font-bold text-sm">Aishu's</span>
               </motion.div>
               <span className="text-2xl font-bold text-gray-800">
                 Dunkin Delicacies
