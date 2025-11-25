@@ -21,7 +21,7 @@ const Menu = () => {
       items: [
         { name: "Classic Fudge Brownies", weight: "4 pieces", price: "₹320" },
         { name: "Walnut Brownies", weight: "4 pieces", price: "₹350" },
-        { name: "Salted Caramel Brownies", weight: "6 pieces", price: "₹900" }
+        { name: "Assorted Brownie Box", weight: "6 pieces", price: "₹900" }
       ],
       bgColor: "bg-gradient-to-br from-amber-100 to-orange-100"
     },
@@ -31,7 +31,7 @@ const Menu = () => {
       items: [
         { name: "Vanilla Bean Cupcakes", weight: "6 pieces", price: "₹300" },
         { name: "Red Velvet Cupcakes", weight: "6 pieces", price: "₹350" },
-        { name: "Lemon Blueberry Cupcakes", weight: "6 pieces", price: "₹450" }
+        { name: "Blueberry cream cheeseCupcakes", weight: "6 pieces", price: "₹450" }
       ],
       bgColor: "bg-gradient-to-br from-pink-100 to-rose-100"
     },
