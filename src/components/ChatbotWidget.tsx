@@ -28,7 +28,7 @@ interface OrderData {
 
 const ChatbotWidget = () => {
   // Version identifier - update this when making breaking changes to force cache clear
-  const CHATBOT_VERSION = '1.0.3';
+  const CHATBOT_VERSION = '1.0.4';
   
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
