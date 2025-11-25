@@ -45,7 +45,7 @@ const ChatbotWidget = () => {
     {
       key: 'flavor',
       question: "Yummy choice! What flavor are you craving?",
-      quickReplies: ['🍫 Chocolate', '🍓 Strawberry', '🍋 Lemon', '🍦 Vanilla', '✨ Surprise Me'],
+      quickReplies: ['🍫 Chocolate', '🍓 Strawberry', '🫐 Blueberry', '🍦 Vanilla', '✨ Surprise Me'],
       dataKey: 'flavor'
     },
     {
