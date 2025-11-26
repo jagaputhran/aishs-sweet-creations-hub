@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Cake, Cookie, Sparkles, ShoppingBag } from 'lucide-react';
+import { MessageCircle, X, Send, Cake, Cookie, Sparkles, ShoppingBag, Mic, MicOff } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -29,7 +29,7 @@ interface OrderData {
 
 const ChatbotWidget = () => {
   // Version identifier - update this when making breaking changes to force cache clear
-  const CHATBOT_VERSION = '1.0.7';
+  const CHATBOT_VERSION = '1.0.8';
   
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -39,10 +39,57 @@ const ChatbotWidget = () => {
   const [userInput, setUserInput] = useState('');
   const [conversationHistory, setConversationHistory] = useState<{step: number, data: OrderData}[]>([]);
   const [isAROpen, setIsAROpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [voiceSupported, setVoiceSupported] = useState(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
   const { toast } = useToast();
+
+  // Check for Web Speech API support and initialize
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setVoiceSupported(true);
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+      
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        handleVoiceInput(transcript);
+      };
+      
+      recognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsRecording(false);
+        
+        if (event.error === 'not-allowed') {
+          toast({
+            title: "Microphone Access Denied 🎤",
+            description: "Please allow microphone access in your browser settings",
+            variant: "destructive"
+          });
+        } else if (event.error === 'no-speech') {
+          toast({
+            title: "No Speech Detected 🤔",
+            description: "Please try again and speak clearly",
+            variant: "destructive"
+          });
+        }
+      };
+      
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+      
+      recognitionRef.current = recognition;
+    } else {
+      console.log('Speech recognition not supported');
+    }
+  }, []);
 
   // Load saved conversation from localStorage with version check
   useEffect(() => {
@@ -446,6 +493,12 @@ const ChatbotWidget = () => {
 
   const toggleChat = () => {
     if (isOpen) {
+      // Stop recording if active
+      if (isRecording && recognitionRef.current) {
+        recognitionRef.current.stop();
+        setIsRecording(false);
+      }
+      
       gsap.killTweensOf(chatWindowRef.current);
       gsap.to(chatWindowRef.current, {
         scale: 0,
@@ -459,6 +512,233 @@ const ChatbotWidget = () => {
     } else {
       setIsOpen(true);
     }
+  };
+
+  const startVoiceRecording = () => {
+    if (!voiceSupported) {
+      toast({
+        title: "Voice Not Supported 😔",
+        description: "Your browser doesn't support voice input. Try Chrome or Edge!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setIsRecording(true);
+      recognitionRef.current?.start();
+      
+      toast({
+        title: "Listening... 🎤",
+        description: "Speak your order preferences now!",
+      });
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      setIsRecording(false);
+      toast({
+        title: "Error 😕",
+        description: "Could not start voice recording. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const handleVoiceInput = (transcript: string) => {
+    console.log('Voice transcript:', transcript);
+    
+    addUserMessage(`🎤 ${transcript}`);
+    
+    // Parse the transcript to extract order details using keyword matching
+    const lowerTranscript = transcript.toLowerCase();
+    
+    // Extract order type
+    const cakeKeywords = ['cake', 'cakes', 'birthday cake', 'wedding cake'];
+    const cupcakeKeywords = ['cupcake', 'cupcakes', 'mini cake'];
+    const pastryKeywords = ['pastry', 'pastries', 'danish', 'croissant'];
+    const cookieKeywords = ['cookie', 'cookies', 'biscuit'];
+    const brownieKeywords = ['brownie', 'brownies', 'fudge'];
+    
+    // Extract flavor
+    const chocolateKeywords = ['chocolate', 'choco', 'cocoa', 'dark chocolate'];
+    const strawberryKeywords = ['strawberry', 'strawberries', 'berry'];
+    const blueberryKeywords = ['blueberry', 'blueberries', 'blue berry'];
+    const vanillaKeywords = ['vanilla', 'plain'];
+    
+    // Extract occasion
+    const birthdayKeywords = ['birthday', 'birth day', 'bday', 'anniversary of birth'];
+    const weddingKeywords = ['wedding', 'marriage', 'bride', 'groom'];
+    const anniversaryKeywords = ['anniversary', 'celebration'];
+    const graduationKeywords = ['graduation', 'graduate', 'degree'];
+    const corporateKeywords = ['corporate', 'office', 'business', 'company'];
+    
+    // Extract size hints
+    const smallKeywords = ['small', 'few', 'little', '1', '2', '3', '4', '5', 'one', 'two', 'three', 'four', 'five'];
+    const mediumKeywords = ['medium', '6', '7', '8', '10', 'six', 'seven', 'eight', 'ten', 'dozen'];
+    const largeKeywords = ['large', 'big', '15', '20', '25', 'fifteen', 'twenty'];
+    const extraLargeKeywords = ['huge', 'extra large', 'party', '30', '40', '50', 'thirty', 'forty', 'fifty'];
+    
+    // Extract budget hints
+    const lowBudgetKeywords = ['cheap', 'affordable', 'budget', 'inexpensive', '500', '800'];
+    const mediumBudgetKeywords = ['reasonable', '1000', '1500', 'thousand'];
+    const highBudgetKeywords = ['premium', 'luxury', 'expensive', '2000', '3000', 'two thousand'];
+    const veryHighBudgetKeywords = ['deluxe', '5000', 'five thousand', 'lavish'];
+    
+    const extractedData: Partial<OrderData> = {};
+    
+    // Match type
+    if (cakeKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.type = '🍰 Cake';
+    } else if (cupcakeKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.type = '🧁 Cupcakes';
+    } else if (pastryKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.type = '🥐 Pastries';
+    } else if (cookieKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.type = '🍪 Cookies';
+    } else if (brownieKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.type = '🍫🎁 Brownie Box';
+    }
+    
+    // Match flavor
+    if (chocolateKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.flavor = '🍫 Chocolate';
+    } else if (strawberryKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.flavor = '🍓 Strawberry';
+    } else if (blueberryKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.flavor = '🫐 Blueberry';
+    } else if (vanillaKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.flavor = '🍦 Vanilla';
+    }
+    
+    // Match occasion
+    if (birthdayKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.occasion = '🎂 Birthday';
+    } else if (weddingKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.occasion = '💍 Wedding';
+    } else if (anniversaryKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.occasion = '🎉 Anniversary';
+    } else if (graduationKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.occasion = '🎓 Graduation';
+    } else if (corporateKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.occasion = '💼 Corporate Event';
+    }
+    
+    // Match size
+    if (extraLargeKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.size = '🎪 Extra Large (30+)';
+    } else if (largeKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.size = '👨‍👩‍👧‍👦 Large (16-30)';
+    } else if (mediumKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.size = '👥 Medium (6-15)';
+    } else if (smallKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.size = '👤 Small (1-5)';
+    }
+    
+    // Match budget
+    if (veryHighBudgetKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.budget = '💎 Above ₹5000';
+    } else if (highBudgetKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.budget = '💳 ₹2000-₹5000';
+    } else if (mediumBudgetKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.budget = '💵 ₹1000-₹2000';
+    } else if (lowBudgetKeywords.some(kw => lowerTranscript.includes(kw))) {
+      extractedData.budget = '💰 Under ₹1000';
+    }
+    
+    // Update order data with extracted information
+    const updatedOrderData = { ...orderData, ...extractedData };
+    setOrderData(updatedOrderData);
+    
+    // Generate AI response based on what was understood
+    let responseText = "Great! I heard: \"" + transcript + "\"\n\n";
+    const understood: string[] = [];
+    
+    if (extractedData.type) understood.push(`Type: ${extractedData.type}`);
+    if (extractedData.flavor) understood.push(`Flavor: ${extractedData.flavor}`);
+    if (extractedData.occasion) understood.push(`Occasion: ${extractedData.occasion}`);
+    if (extractedData.size) understood.push(`Size: ${extractedData.size}`);
+    if (extractedData.budget) understood.push(`Budget: ${extractedData.budget}`);
+    
+    if (understood.length > 0) {
+      responseText += "I understood:\n" + understood.join("\n") + "\n\n";
+      
+      // Find the next unanswered step
+      let nextStep = currentStep;
+      for (let i = 0; i < conversationFlow.length; i++) {
+        const stepKey = conversationFlow[i].dataKey;
+        if (stepKey && !updatedOrderData[stepKey as keyof OrderData]) {
+          nextStep = i;
+          break;
+        }
+      }
+      
+      // If we found missing info, ask about it
+      if (nextStep < conversationFlow.length) {
+        setCurrentStep(nextStep);
+        setTimeout(() => {
+          addBotMessage(
+            responseText + conversationFlow[nextStep].question,
+            conversationFlow[nextStep].quickReplies.length > 0 
+              ? [...conversationFlow[nextStep].quickReplies, '⬅️ Go Back']
+              : [],
+            500
+          );
+        }, 500);
+      } else {
+        // All info gathered, ask for name/phone if missing
+        if (!updatedOrderData.name) {
+          setCurrentStep(conversationFlow.findIndex(step => step.key === 'name'));
+          setTimeout(() => {
+            addBotMessage(responseText + "What's your name?", [], 500);
+          }, 500);
+        } else if (!updatedOrderData.phone) {
+          setCurrentStep(conversationFlow.findIndex(step => step.key === 'phone'));
+          setTimeout(() => {
+            addBotMessage(responseText + "And your phone number?", [], 500);
+          }, 500);
+        } else if (!updatedOrderData.deliveryDate) {
+          setCurrentStep(conversationFlow.findIndex(step => step.key === 'deliveryDate'));
+          setTimeout(() => {
+            addBotMessage(
+              responseText + "When would you like to receive your order?",
+              conversationFlow[conversationFlow.findIndex(step => step.key === 'deliveryDate')].quickReplies,
+              500
+            );
+          }, 500);
+        }
+      }
+    } else {
+      responseText += "I couldn't quite catch all the details. Let me ask you step by step! 😊";
+      setTimeout(() => {
+        addBotMessage(responseText, [], 500);
+      }, 500);
+      
+      // Continue with normal flow
+      setTimeout(() => {
+        if (currentStep < conversationFlow.length) {
+          addBotMessage(
+            conversationFlow[currentStep].question,
+            currentStep > 0 
+              ? [...conversationFlow[currentStep].quickReplies, '⬅️ Go Back']
+              : conversationFlow[currentStep].quickReplies,
+            1000
+          );
+        }
+      }, 1500);
+    }
+    
+    toast({
+      title: "Voice Processed! ✅",
+      description: understood.length > 0 
+        ? `Captured ${understood.length} detail(s) from your voice` 
+        : "Please use the buttons or type to continue",
+    });
   };
 
   return (
@@ -815,6 +1095,55 @@ const ChatbotWidget = () => {
                   </p>
                 )}
               </form>
+            )}
+
+            {/* Voice Input Button - Always visible */}
+            {!isTyping && voiceSupported && (
+              <div className="p-4 border-t border-pink-100 bg-gradient-to-r from-pink-50 to-rose-50">
+                <motion.button
+                  type="button"
+                  onClick={isRecording ? stopVoiceRecording : startVoiceRecording}
+                  className={`w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-all ${
+                    isRecording 
+                      ? 'bg-gradient-to-r from-red-400 to-red-500 text-white shadow-lg' 
+                      : 'bg-gradient-to-r from-purple-400 to-pink-500 text-white hover:from-purple-500 hover:to-pink-600 shadow-md'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  animate={isRecording ? {
+                    boxShadow: [
+                      '0 0 0 0 rgba(239, 68, 68, 0.7)',
+                      '0 0 0 10px rgba(239, 68, 68, 0)',
+                    ],
+                  } : {}}
+                  transition={isRecording ? {
+                    duration: 1,
+                    repeat: Infinity,
+                  } : {}}
+                >
+                  {isRecording ? (
+                    <>
+                      <motion.div
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 0.5, repeat: Infinity }}
+                      >
+                        <MicOff className="w-5 h-5" />
+                      </motion.div>
+                      <span>Listening... Tap to Stop</span>
+                    </>
+                  ) : (
+                    <>
+                      <Mic className="w-5 h-5" />
+                      <span>🎤 Speak Your Order</span>
+                    </>
+                  )}
+                </motion.button>
+                <p className="text-xs text-center text-gray-500 mt-2">
+                  {isRecording 
+                    ? "Speak clearly: type, flavor, occasion, size, budget..." 
+                    : "Try: 'I want a chocolate cake for my daughter's birthday'"}
+                </p>
+              </div>
             )}
           </div>
         )}
