@@ -497,21 +497,21 @@ const ARCakePreview: React.FC<ARCakePreviewProps> = ({
 
                 {/* Professional Info Card */}
                 <motion.div
-                  className="absolute top-20 left-4 right-4 rounded-2xl shadow-2xl overflow-hidden"
-                  initial={{ y: -100, opacity: 0 }}
+                  className="absolute bottom-32 left-4 right-4 rounded-2xl shadow-2xl overflow-hidden"
+                  initial={{ y: 100, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.3, type: "spring" }}
                 >
                   <div 
-                    className="backdrop-blur-xl p-4 border-2"
+                    className="backdrop-blur-xl p-6 border-2"
                     style={{
-                      background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,240,245,0.92) 100%)',
+                      background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,240,245,0.95) 100%)',
                       borderColor: 'rgba(255,255,255,0.6)',
                     }}
                   >
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center gap-4 mb-4">
                       <div 
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-2xl shadow-lg"
+                        className="w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg"
                         style={{
                           background: cakeColors.frosting,
                         }}
@@ -519,43 +519,43 @@ const ARCakePreview: React.FC<ARCakePreviewProps> = ({
                         {cakeEmoji}
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-900 text-base">Your Custom Creation</h3>
-                        <p className="text-xs text-gray-600 flex items-center gap-1">
+                        <h3 className="font-bold text-gray-900 text-xl">Your Custom Creation</h3>
+                        <p className="text-sm text-gray-600 flex items-center gap-1">
                           <Sparkles className="w-3 h-3" />
                           AR Preview Mode
                         </p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="grid grid-cols-2 gap-3">
                       <div 
-                        className="rounded-lg p-2 border"
+                        className="rounded-xl p-3 border-2"
                         style={{
                           background: 'rgba(255,255,255,0.7)',
                           borderColor: 'rgba(0,0,0,0.05)',
                         }}
                       >
-                        <span className="text-gray-500 font-medium block mb-0.5">Type</span>
-                        <p className="font-bold text-gray-900 text-xs truncate">{cakeType}</p>
+                        <span className="text-xs text-gray-500 font-medium block mb-1">Type</span>
+                        <p className="font-bold text-gray-900">{cakeType}</p>
                       </div>
                       <div 
-                        className="rounded-lg p-2 border"
+                        className="rounded-xl p-3 border-2"
                         style={{
                           background: 'rgba(255,255,255,0.7)',
                           borderColor: 'rgba(0,0,0,0.05)',
                         }}
                       >
-                        <span className="text-gray-500 font-medium block mb-0.5">Flavor</span>
-                        <p className="font-bold text-gray-900 text-xs truncate">{flavor}</p>
+                        <span className="text-xs text-gray-500 font-medium block mb-1">Flavor</span>
+                        <p className="font-bold text-gray-900">{flavor}</p>
                       </div>
                       <div 
-                        className="rounded-lg p-2 border"
+                        className="col-span-2 rounded-xl p-3 border-2"
                         style={{
                           background: 'rgba(255,255,255,0.7)',
                           borderColor: 'rgba(0,0,0,0.05)',
                         }}
                       >
-                        <span className="text-gray-500 font-medium block mb-0.5">Theme</span>
-                        <p className="font-bold text-gray-900 text-xs truncate">{theme}</p>
+                        <span className="text-xs text-gray-500 font-medium block mb-1">Theme</span>
+                        <p className="font-bold text-gray-900">{theme}</p>
                       </div>
                     </div>
                   </div>

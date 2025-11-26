@@ -27,60 +27,9 @@ interface OrderData {
   deliveryDate?: string;
 }
 
-// Knowledge base for Q&A about the bakery
-const bakeryKnowledge = {
-  baker: {
-    name: "Aishwarya (Aish)",
-    about: "Welcome to my little corner of sweetness! 🌸 What started as a passion for baking in my home kitchen has blossomed into Dunkin Delicacies, where every treat is crafted with love and attention to detail. I believe that the best baked goods come from the heart. Using only the finest ingredients and time-honored techniques, I create each cookie, brownie, cupcake, and cake as if it were for my own family. Because in a way, every customer becomes part of our sweet family! 💖",
-    values: ["Made with Love ❤️", "Premium Quality ✨", "Fresh Daily 🌅"]
-  },
-  contact: {
-    phone: "+91 80151 02020",
-    email: "ashwarya99a@gmail.com",
-    whatsapp: "918015102020",
-    hours: "9:00 AM - 8:00 PM (Daily)"
-  },
-  menu: [
-    { category: "Cookies 🍪", items: [
-      { name: "Chocolate Chip Cookies", details: "100g (10 pieces)", price: "₹400" },
-      { name: "Oatmeal Raisin Cookies", details: "100g (10 pieces)", price: "₹400" },
-      { name: "Double Chocolate Cookies", details: "100g (5 pieces)", price: "₹250" }
-    ]},
-    { category: "Brownies 🍫", items: [
-      { name: "Classic Fudge Brownies", details: "4 pieces", price: "₹320" },
-      { name: "Walnut Brownies", details: "4 pieces", price: "₹350" },
-      { name: "Assorted Brownie Box", details: "6 pieces", price: "₹900" }
-    ]},
-    { category: "Cupcakes 🧁", items: [
-      { name: "Vanilla Bean Cupcakes", details: "6 pieces", price: "₹300" },
-      { name: "Red Velvet Cupcakes", details: "6 pieces", price: "₹350" },
-      { name: "Blueberry Cream Cheese Cupcakes", details: "6 pieces", price: "₹450" }
-    ]},
-    { category: "Artisan Cakes 🎂", items: [
-      { name: "Birthday Celebration Cake", details: "1kg", price: "₹1000" },
-      { name: "Anniversary Special Cake", details: "850gm", price: "₹1300" },
-      { name: "Custom Theme Cake", details: "1kg", price: "₹1200" }
-    ]},
-    { category: "Healthy Options 🌱", items: [
-      { name: "Whole Wheat Brownie Box", details: "600g - 6 pcs", price: "₹900" },
-      { name: "Whole Wheat Butter Cookies", details: "200g - 12 pcs", price: "₹300" },
-      { name: "Whole Wheat Oats & Nuts", details: "400g - 10 pcs", price: "₹800" },
-      { name: "Classic Choco Chunk Cookies", details: "340g - 5 pcs", price: "₹300" },
-      { name: "Whole Wheat Choco Chunk Cookies", details: "520g - 10 pcs", price: "₹800" }
-    ]}
-  ],
-  business: {
-    minOrder: "₹200 for delivery",
-    advanceNotice: "24-48 hours for custom orders",
-    serviceArea: "Home delivery within city limits",
-    specialties: "🌱 Vegetarian • 🍃 Eggless • 🍯 Sugar-Free Options Available"
-  },
-  recentCreations: "We've recently created beautiful gourmet brownie boxes with premium toppings like cashews, almonds, hazelnuts, and golden sprinkles! 🎨 Also heart-shaped anniversary brownies with flavors like Nutella, Dark & White Chocolate, and Biscoff. Every order is crafted with love! 💝"
-};
-
 const ChatbotWidget = () => {
-  // Version identifier
-  const CHATBOT_VERSION = '2.0.0';
+  // Version identifier - update this when making breaking changes to force cache clear
+  const CHATBOT_VERSION = '1.0.6';
   
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -90,63 +39,10 @@ const ChatbotWidget = () => {
   const [userInput, setUserInput] = useState('');
   const [conversationHistory, setConversationHistory] = useState<{step: number, data: OrderData}[]>([]);
   const [isAROpen, setIsAROpen] = useState(false);
-  const [chatMode, setChatMode] = useState<'menu' | 'custom-order' | 'qa'>('menu');
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
-
-  // Q&A keyword matching function
-  const handleQA = (userMessage: string): string => {
-    const msg = userMessage.toLowerCase();
-    
-    // Baker/About queries
-    if (msg.includes('baker') || msg.includes('aish') || msg.includes('who') || msg.includes('meet') || msg.includes('about') || msg.includes('story')) {
-      return `🌸 Meet ${bakeryKnowledge.baker.name}!\n\n${bakeryKnowledge.baker.about}\n\n✨ What makes us special:\n${bakeryKnowledge.baker.values.join('\n')}\n\nIs there anything else you'd like to know? 💝`;
-    }
-    
-    // Contact queries
-    if (msg.includes('contact') || msg.includes('phone') || msg.includes('call') || msg.includes('email') || msg.includes('reach') || msg.includes('message')) {
-      return `📞 Contact Information:\n\n📱 Phone: ${bakeryKnowledge.contact.phone}\n📧 Email: ${bakeryKnowledge.contact.email}\n💬 WhatsApp: Available for quick orders!\n🕐 Hours: ${bakeryKnowledge.contact.hours}\n\nFeel free to reach out anytime! 💖`;
-    }
-    
-    // Hours/Operating time queries
-    if (msg.includes('hour') || msg.includes('open') || msg.includes('close') || msg.includes('time') || msg.includes('when') || msg.includes('schedule')) {
-      return `🕐 We're here for you!\n\n⏰ Operating Hours:\n${bakeryKnowledge.contact.hours}\n\n💝 We take orders every day and bake fresh to order. For custom orders, we recommend placing them 24-48 hours in advance to ensure we create the perfect treat for you!`;
-    }
-    
-    // Menu/Price queries
-    if (msg.includes('menu') || msg.includes('price') || msg.includes('cost') || msg.includes('cake') || msg.includes('cookie') || msg.includes('brownie') || msg.includes('cupcake') || msg.includes('pastry') || msg.includes('item')) {
-      let menuText = "🍰 Our Sweet Menu:\n\n";
-      bakeryKnowledge.menu.forEach(category => {
-        menuText += `${category.category}\n`;
-        category.items.forEach(item => {
-          menuText += `• ${item.name}\n  ${item.details} - ${item.price}\n`;
-        });
-        menuText += "\n";
-      });
-      menuText += `✨ ${bakeryKnowledge.business.specialties}\n\nWould you like to place a custom order? 🎂💖`;
-      return menuText;
-    }
-    
-    // Delivery/Service queries
-    if (msg.includes('delivery') || msg.includes('pickup') || msg.includes('service') || msg.includes('area') || msg.includes('location') || msg.includes('ship')) {
-      return `🚚 Delivery Information:\n\n📍 Service Area: ${bakeryKnowledge.business.serviceArea}\n💵 Minimum Order: ${bakeryKnowledge.business.minOrder}\n⏰ Advance Notice: ${bakeryKnowledge.business.advanceNotice}\n\nWe bring sweetness right to your doorstep! 🏠💝`;
-    }
-    
-    // Recent orders/gallery queries
-    if (msg.includes('recent') || msg.includes('gallery') || msg.includes('memory') || msg.includes('memories') || msg.includes('past') || msg.includes('photo') || msg.includes('creation') || msg.includes('work')) {
-      return `🎨 Recent Sweet Memories!\n\n${bakeryKnowledge.recentCreations}\n\nCheck out our website's featured section to see more of our beautiful creations! ✨\n\nWould you like to create something special too? 💖`;
-    }
-    
-    // Dietary/Special options
-    if (msg.includes('eggless') || msg.includes('sugar') || msg.includes('diet') || msg.includes('vegan') || msg.includes('healthy') || msg.includes('wheat') || msg.includes('allergy')) {
-      return `🌱 Special Dietary Options:\n\nWe offer:\n• 🍃 Eggless options\n• 🍯 Sugar-free treats\n• 🌾 Whole wheat varieties\n• 🥗 Healthier alternatives\n\nAll our products are vegetarian! We can also work with you on specific dietary requirements. Just let us know what you need! 💚`;
-    }
-    
-    // Default response
-    return `Aww! I don't have that detail baked in yet, but I can check with the baker for you! 💖\n\nI can help you with:\n• 👩‍🍳 About the baker\n• 📞 Contact information\n• 🍰 Menu & pricing\n• 🎉 Recent sweet memories\n• 🧁 Custom orders\n• 🏪 Hours & delivery info\n• 🌱 Dietary options\n\nWhat would you like to know? 🌟`;
-  };
 
   // Load saved conversation from localStorage with version check
   useEffect(() => {
@@ -167,7 +63,6 @@ const ChatbotWidget = () => {
         setMessages(parsed.messages || []);
         setOrderData(parsed.orderData || {});
         setCurrentStep(parsed.currentStep || 0);
-        setChatMode(parsed.chatMode || 'menu');
       } catch (e) {
         console.error('Failed to load saved state');
         localStorage.removeItem('chatbot-state');
@@ -181,11 +76,10 @@ const ChatbotWidget = () => {
       localStorage.setItem('chatbot-state', JSON.stringify({
         messages,
         orderData,
-        currentStep,
-        chatMode
+        currentStep
       }));
     }
-  }, [messages, orderData, currentStep, chatMode]);
+  }, [messages, orderData, currentStep]);
 
   const conversationFlow = [
     {
@@ -250,12 +144,8 @@ const ChatbotWidget = () => {
   useEffect(() => {
     if (isOpen && messages.length === 0) {
       setTimeout(() => {
-        addBotMessage(
-          "Hello! I'm Aishu's Sweet Assistant! 🧁✨ I'm here to help you with love, cheer, and sweetness! How can I brighten your day?",
-          ['🧁 Place Custom Order', '💬 Ask Questions', '🍰 View Menu & Prices'],
-          800
-        );
-      }, 500);
+        addBotMessage(conversationFlow[0].question, conversationFlow[0].quickReplies);
+      }, 800);
     }
   }, [isOpen]);
 
@@ -279,7 +169,7 @@ const ChatbotWidget = () => {
         { scale: 1, opacity: 1, y: 0, duration: 0.4, ease: 'back.out(1.7)' }
       );
       
-      // Floating animation for chat window
+      // Floating animation for chat window - optimized for Samsung devices
       gsap.to(chatWindowRef.current, {
         y: -3,
         duration: 2,
@@ -336,102 +226,27 @@ const ChatbotWidget = () => {
   };
 
   const handleQuickReply = (reply: string) => {
-    addUserMessage(reply);
-
     // Check if it's a restart request
-    if (reply === '🔄 Start New Order' || reply === '🔄 Start Over') {
+    if (reply === '🔄 Start New Order') {
       resetChat();
       setTimeout(() => {
-        addBotMessage(
-          "Hello! I'm Aishu's Sweet Assistant! 🧁✨ I'm here to help you with love, cheer, and sweetness! How can I brighten your day?",
-          ['🧁 Place Custom Order', '💬 Ask Questions', '🍰 View Menu & Prices'],
-          500
-        );
+        addBotMessage(conversationFlow[0].question, conversationFlow[0].quickReplies);
       }, 300);
       return;
     }
 
-    // Handle mode selection from menu
-    if (chatMode === 'menu') {
-      if (reply === '🧁 Place Custom Order') {
-        setChatMode('custom-order');
-        setTimeout(() => {
-          addBotMessage(
-            conversationFlow[0].question,
-            conversationFlow[0].quickReplies,
-            800
-          );
-        }, 500);
-        return;
-      } else if (reply === '💬 Ask Questions') {
-        setChatMode('qa');
-        setTimeout(() => {
-          addBotMessage(
-            "I'm here to answer all your sweet questions! 🌟 Ask me about our menu, prices, the baker, contact info, delivery, or anything else!",
-            ['📞 Contact Info', '⭐ Meet the Baker', '🍰 View Full Menu', '🚚 Delivery Info', '🧁 Place Custom Order'],
-            800
-          );
-        }, 500);
-        return;
-      } else if (reply === '🍰 View Menu & Prices') {
-        setChatMode('qa');
-        setTimeout(() => {
-          const menuResponse = handleQA('menu');
-          addBotMessage(
-            menuResponse,
-            ['🧁 Place Custom Order', '📞 Contact Info', '💬 Ask Another Question'],
-            800
-          );
-        }, 500);
-        return;
-      }
-    }
-
-    // Handle Q&A mode quick replies
-    if (chatMode === 'qa') {
-      let response = '';
-      let nextOptions: string[] = ['🧁 Place Custom Order', '💬 Ask Another Question', '🔄 Start Over'];
-
-      if (reply === '📞 Contact Info') {
-        response = handleQA('contact');
-      } else if (reply === '⭐ Meet the Baker') {
-        response = handleQA('baker');
-      } else if (reply === '🍰 View Full Menu') {
-        response = handleQA('menu');
-      } else if (reply === '🚚 Delivery Info') {
-        response = handleQA('delivery');
-      } else if (reply === '🧁 Place Custom Order') {
-        setChatMode('custom-order');
-        setTimeout(() => {
-          addBotMessage(
-            conversationFlow[0].question,
-            conversationFlow[0].quickReplies,
-            800
-          );
-        }, 500);
-        return;
-      } else if (reply === '💬 Ask Another Question') {
-        response = "Of course! What else would you like to know? 💝";
-        nextOptions = ['📞 Contact Info', '⭐ Meet the Baker', '🍰 View Full Menu', '🚚 Delivery Info', '🧁 Place Custom Order'];
-      }
-
-      if (response) {
-        setTimeout(() => {
-          addBotMessage(response, nextOptions, 800);
-        }, 500);
-        return;
-      }
-    }
-
-    // Handle go back in custom order flow
+    // Handle go back
     if (reply === '⬅️ Go Back' && conversationHistory.length > 0) {
       const previous = conversationHistory[conversationHistory.length - 1];
       
+      // Remove last 2 messages (user answer + current bot question)
       setMessages(prev => {
         const newMessages = prev.slice(0, -2);
+        // Update the last message (previous question) to include/exclude Go Back button
         if (newMessages.length > 0) {
           const lastMsg = newMessages[newMessages.length - 1];
           if (lastMsg.isBot) {
+            // Update quick replies for the previous step
             const replies = previous.step > 0 
               ? [...conversationFlow[previous.step].quickReplies, '⬅️ Go Back']
               : conversationFlow[previous.step].quickReplies;
@@ -452,22 +267,21 @@ const ChatbotWidget = () => {
       return;
     }
 
-    // Handle custom order flow
-    if (chatMode === 'custom-order') {
-      const currentStepData = conversationFlow[currentStep];
+    addUserMessage(reply);
+    const currentStepData = conversationFlow[currentStep];
+    
+    if (currentStepData.dataKey) {
+      // Save current state to history before updating
+      setConversationHistory(prev => [...prev, { step: currentStep, data: orderData }]);
       
-      if (currentStepData.dataKey) {
-        setConversationHistory(prev => [...prev, { step: currentStep, data: orderData }]);
-        
-        const updatedOrderData = {
-          ...orderData,
-          [currentStepData.dataKey!]: reply
-        };
-        setOrderData(updatedOrderData);
-        moveToNextStep(updatedOrderData);
-      } else {
-        moveToNextStep();
-      }
+      const updatedOrderData = {
+        ...orderData,
+        [currentStepData.dataKey!]: reply
+      };
+      setOrderData(updatedOrderData);
+      moveToNextStep(updatedOrderData);
+    } else {
+      moveToNextStep();
     }
   };
 
@@ -475,22 +289,6 @@ const ChatbotWidget = () => {
     e.preventDefault();
     if (!userInput.trim()) return;
 
-    // Handle Q&A mode text input
-    if (chatMode === 'qa') {
-      addUserMessage(userInput);
-      const response = handleQA(userInput);
-      setTimeout(() => {
-        addBotMessage(
-          response,
-          ['🧁 Place Custom Order', '💬 Ask Another Question', '🔄 Start Over'],
-          800
-        );
-      }, 500);
-      setUserInput('');
-      return;
-    }
-
-    // Handle custom order mode text input
     const currentStepData = conversationFlow[currentStep];
     
     // Validate input if validation function exists
@@ -514,6 +312,7 @@ const ChatbotWidget = () => {
     addUserMessage(formattedInput);
     
     if (currentStepData.dataKey) {
+      // Save current state to history before updating
       setConversationHistory(prev => [...prev, { step: currentStep, data: orderData }]);
       
       const updatedOrderData = {
@@ -536,6 +335,7 @@ const ChatbotWidget = () => {
     if (nextStep < conversationFlow.length) {
       setCurrentStep(nextStep);
       setTimeout(() => {
+        // Add "Go Back" option if not the first step
         const replies = nextStep > 0 
           ? [...conversationFlow[nextStep].quickReplies, '⬅️ Go Back']
           : conversationFlow[nextStep].quickReplies;
@@ -552,6 +352,7 @@ const ChatbotWidget = () => {
   };
 
   const showSummaryAndSendToWhatsApp = (currentOrderData?: OrderData) => {
+    // Use the passed order data or fall back to state
     const finalOrderData = currentOrderData || orderData;
     
     // Trigger confetti
@@ -572,6 +373,7 @@ const ChatbotWidget = () => {
   };
 
   const sendToWhatsApp = (finalOrderData?: OrderData) => {
+    // Use the passed order data or fall back to state
     const dataToSend = finalOrderData || orderData;
     
     const message = `🧁 *Custom Order Request from Chatbot*\n\n` +
@@ -596,10 +398,11 @@ const ChatbotWidget = () => {
       description: "Your order details have been prepared. Complete your order on WhatsApp!",
     });
 
+    // Add a completion message instead of resetting
     setTimeout(() => {
       addBotMessage(
-        "✅ Your order has been sent to WhatsApp! If you'd like to place another order or ask more questions, just click below.",
-        ['🔄 Start New Order', '💬 Ask Questions'],
+        "✅ Your order has been sent to WhatsApp! If you'd like to place another order, just click the 'Start New Order' button below.",
+        ['🔄 Start New Order'],
         800
       );
     }, 2000);
@@ -610,7 +413,6 @@ const ChatbotWidget = () => {
     setOrderData({});
     setCurrentStep(0);
     setConversationHistory([]);
-    setChatMode('menu');
     localStorage.removeItem('chatbot-state');
   };
 
@@ -779,8 +581,8 @@ const ChatbotWidget = () => {
                   <Cake className="w-6 h-6 text-pink-500" />
                 </div>
                 <div>
-                  <h3 className="text-white font-bold">Aishu's Sweet Assistant</h3>
-                  <p className="text-pink-100 text-xs">Here with love & cheer! 🧁</p>
+                  <h3 className="text-white font-bold">Aishu's Baker Bot</h3>
+                  <p className="text-pink-100 text-xs">Your sweet assistant 🧁</p>
                 </div>
               </div>
               <button
@@ -791,8 +593,8 @@ const ChatbotWidget = () => {
               </button>
             </div>
 
-            {/* Progress Indicator - Only show in custom order mode */}
-            {chatMode === 'custom-order' && currentStep > 0 && currentStep < conversationFlow.length && (
+            {/* Progress Indicator */}
+            {currentStep > 0 && currentStep < conversationFlow.length && (
               <div className="px-4 py-2 bg-pink-50 border-b border-pink-100">
                 <div className="flex items-center justify-between text-xs text-pink-600">
                   <span className="font-medium">Step {currentStep + 1} of {conversationFlow.length}</span>
@@ -810,13 +612,6 @@ const ChatbotWidget = () => {
               </div>
             )}
 
-            {/* Mode Indicator for Q&A */}
-            {chatMode === 'qa' && (
-              <div className="px-4 py-2 bg-purple-50 border-b border-purple-100 text-center">
-                <span className="text-xs text-purple-600 font-medium">💬 Q&A Mode - Ask me anything!</span>
-              </div>
-            )}
-
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((message, msgIndex) => (
@@ -828,7 +623,7 @@ const ChatbotWidget = () => {
                   className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} items-end gap-2`}
                 >
                   {/* Category Icon for bot messages */}
-                  {message.isBot && msgIndex > 0 && orderData.type && chatMode === 'custom-order' && (
+                  {message.isBot && msgIndex > 0 && orderData.type && (
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
@@ -840,7 +635,7 @@ const ChatbotWidget = () => {
                   )}
                   
                   <div className="relative flex flex-col group">
-                    {/* Timestamp on hover */}
+                    {/* Timestamp on hover - positioned above message */}
                     <span className={`text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mb-1 ${
                       message.isBot ? 'self-start' : 'self-end'
                     }`}>
@@ -968,16 +763,15 @@ const ChatbotWidget = () => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input Area - Show for custom order requiresInput steps AND for Q&A mode */}
-            {((chatMode === 'custom-order' && conversationFlow[currentStep]?.requiresInput) || 
-              (chatMode === 'qa' && messages.length > 0)) && !isTyping && (
+            {/* Input Area */}
+            {conversationFlow[currentStep]?.requiresInput && !isTyping && (
               <form onSubmit={handleInputSubmit} className="p-4 border-t border-pink-100 bg-white">
                 <div className="flex gap-2">
                   <Input
                     value={userInput}
                     onChange={(e) => {
-                      // Auto-format phone number as user types (only in custom order mode)
-                      if (chatMode === 'custom-order' && conversationFlow[currentStep]?.key === 'phone') {
+                      // Auto-format phone number as user types
+                      if (conversationFlow[currentStep].key === 'phone') {
                         const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
                         setUserInput(digits);
                       } else {
@@ -985,28 +779,26 @@ const ChatbotWidget = () => {
                       }
                     }}
                     placeholder={
-                      chatMode === 'qa'
-                        ? "Type your question..."
-                        : conversationFlow[currentStep]?.key === 'phone' 
+                      conversationFlow[currentStep].key === 'phone' 
                         ? "Enter 10-digit number..." 
-                        : conversationFlow[currentStep]?.key === 'name'
+                        : conversationFlow[currentStep].key === 'name'
                         ? "Enter your name..."
                         : "Type your answer..."
                     }
-                    type={chatMode === 'custom-order' && conversationFlow[currentStep]?.key === 'phone' ? 'tel' : 'text'}
-                    maxLength={chatMode === 'custom-order' && conversationFlow[currentStep]?.key === 'phone' ? 10 : undefined}
+                    type={conversationFlow[currentStep].key === 'phone' ? 'tel' : 'text'}
+                    maxLength={conversationFlow[currentStep].key === 'phone' ? 10 : undefined}
                     className="flex-1 border-pink-200 focus:border-pink-400"
                     autoFocus
                   />
                   <Button
                     type="submit"
                     className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600"
-                    disabled={chatMode === 'custom-order' && conversationFlow[currentStep]?.key === 'phone' && userInput.length !== 10}
+                    disabled={conversationFlow[currentStep].key === 'phone' && userInput.length !== 10}
                   >
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>
-                {chatMode === 'custom-order' && conversationFlow[currentStep]?.key === 'phone' && userInput.length > 0 && (
+                {conversationFlow[currentStep].key === 'phone' && userInput.length > 0 && (
                   <p className={`text-xs mt-2 ${
                     userInput.length === 10 && /^[6-9]/.test(userInput) 
                       ? 'text-green-600' 
@@ -1017,7 +809,7 @@ const ChatbotWidget = () => {
                       : `${userInput.length}/10 digits`}
                   </p>
                 )}
-                {chatMode === 'custom-order' && conversationFlow[currentStep]?.key === 'name' && userInput.length > 0 && (
+                {conversationFlow[currentStep].key === 'name' && userInput.length > 0 && (
                   <p className="text-xs mt-2 text-gray-500">
                     {userInput.length} characters
                   </p>
