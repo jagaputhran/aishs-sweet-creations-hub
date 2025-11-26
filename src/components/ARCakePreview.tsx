@@ -216,8 +216,9 @@ const ARCakePreview: React.FC<ARCakePreviewProps> = ({
               <div className="absolute inset-0 pointer-events-none">
                 {/* 3D Cake Visualization */}
                 <motion.div
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  className="absolute left-1/2 -translate-x-1/2"
                   style={{
+                    top: 'calc(50% - 80px)', // Adjust to account for info card
                     transformStyle: 'preserve-3d',
                     perspective: '1200px',
                   }}
@@ -497,21 +498,21 @@ const ARCakePreview: React.FC<ARCakePreviewProps> = ({
 
                 {/* Professional Info Card */}
                 <motion.div
-                  className="absolute bottom-32 left-4 right-4 rounded-2xl shadow-2xl overflow-hidden"
+                  className="absolute bottom-36 left-4 right-4 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto"
                   initial={{ y: 100, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.3, type: "spring" }}
                 >
                   <div 
-                    className="backdrop-blur-xl p-6 border-2"
+                    className="backdrop-blur-xl p-4 border-2"
                     style={{
                       background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,240,245,0.95) 100%)',
                       borderColor: 'rgba(255,255,255,0.6)',
                     }}
                   >
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-3 mb-3">
                       <div 
-                        className="w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-lg"
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg"
                         style={{
                           background: cakeColors.frosting,
                         }}
@@ -519,43 +520,43 @@ const ARCakePreview: React.FC<ARCakePreviewProps> = ({
                         {cakeEmoji}
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-900 text-xl">Your Custom Creation</h3>
-                        <p className="text-sm text-gray-600 flex items-center gap-1">
+                        <h3 className="font-bold text-gray-900 text-lg">Your Custom Creation</h3>
+                        <p className="text-xs text-gray-600 flex items-center gap-1">
                           <Sparkles className="w-3 h-3" />
                           AR Preview Mode
                         </p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                       <div 
-                        className="rounded-xl p-3 border-2"
+                        className="rounded-lg p-2 border-2"
                         style={{
                           background: 'rgba(255,255,255,0.7)',
                           borderColor: 'rgba(0,0,0,0.05)',
                         }}
                       >
-                        <span className="text-xs text-gray-500 font-medium block mb-1">Type</span>
-                        <p className="font-bold text-gray-900">{cakeType}</p>
+                        <span className="text-xs text-gray-500 font-medium block mb-0.5">Type</span>
+                        <p className="font-bold text-gray-900 text-sm">{cakeType}</p>
                       </div>
                       <div 
-                        className="rounded-xl p-3 border-2"
+                        className="rounded-lg p-2 border-2"
                         style={{
                           background: 'rgba(255,255,255,0.7)',
                           borderColor: 'rgba(0,0,0,0.05)',
                         }}
                       >
-                        <span className="text-xs text-gray-500 font-medium block mb-1">Flavor</span>
-                        <p className="font-bold text-gray-900">{flavor}</p>
+                        <span className="text-xs text-gray-500 font-medium block mb-0.5">Flavor</span>
+                        <p className="font-bold text-gray-900 text-sm">{flavor}</p>
                       </div>
                       <div 
-                        className="col-span-2 rounded-xl p-3 border-2"
+                        className="col-span-2 rounded-lg p-2 border-2"
                         style={{
                           background: 'rgba(255,255,255,0.7)',
                           borderColor: 'rgba(0,0,0,0.05)',
                         }}
                       >
-                        <span className="text-xs text-gray-500 font-medium block mb-1">Theme</span>
-                        <p className="font-bold text-gray-900">{theme}</p>
+                        <span className="text-xs text-gray-500 font-medium block mb-0.5">Theme</span>
+                        <p className="font-bold text-gray-900 text-sm">{theme}</p>
                       </div>
                     </div>
                   </div>
